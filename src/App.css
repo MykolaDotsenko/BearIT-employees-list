@@ -1,0 +1,19 @@
+.content-section {
+    margin-bottom: 40px;
+  }
+  
+  .buttons-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .tab-content {
+    display: flex;
+    justify-content: center;
+  }
+  
+  p {
+    font-size: 1.2rem;
+  }
+  
