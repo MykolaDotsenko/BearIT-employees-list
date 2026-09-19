@@ -5,7 +5,11 @@ module.exports = {
     es2022: true,
     node: true,
   },
-  extends: ["eslint:recommended"],
+  extends: [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:react/jsx-runtime",
+  ],
   ignorePatterns: ["dist", "node_modules"],
   parserOptions: {
     ecmaVersion: "latest",
@@ -14,9 +18,15 @@ module.exports = {
       jsx: true,
     },
   },
+  settings: {
+    react: {
+      version: "18.2",
+    },
+  },
   plugins: ["react-hooks"],
   rules: {
     "no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+    "react/prop-types": "off",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "error",
   },
