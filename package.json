@@ -1,8 +1,9 @@
 {
   "homepage": "https://mykoladotsenko.github.io/BearIT-employees-list/",
   "name": "people-lens",
-  "private": true,
   "version": "1.0.0",
+  "private": true,
+  "description": "A production-minded PeopleOps directory case study built with React and a small pure domain core.",
   "type": "module",
   "engines": {
     "node": ">=22.22.0"
