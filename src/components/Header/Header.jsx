@@ -1,29 +1,48 @@
-import logo from "/logo-name.svg";
-import { useState } from "react";
-import { styled } from "styled-components";
-// import "./Header.css";
+import styled from "styled-components";
 
-const HeaderContainer = styled.header`
-  height: 50px;
+const Shell = styled.header`
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+  background: rgba(8, 17, 31, 0.82);
+  backdrop-filter: blur(18px);
+`;
+
+const Inner = styled.div`
+  width: min(1180px, calc(100% - 2rem));
+  min-height: 72px;
+  margin: 0 auto;
   display: flex;
-  padding: 0 2rem;
-  justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #ccc;
-  background: #fafafa;
+  justify-content: space-between;
+  gap: 1rem;
+`;
+
+const Mark = styled.span`
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, #67e8f9, #818cf8);
+  color: #07111f;
+  font-weight: 900;
 `;
 
 export default function Header() {
-  const [now, setNow] = useState(new Date());
-
-  setInterval(() => setNow(new Date()), 1000);
-
   return (
-    <header>
-      <img src={logo} alt="BearIT" />
-      {/* <h3>BearIT</h3> */}
-
-      <span>Current time: {now.toLocaleTimeString()}</span>
-    </header>
+    <Shell>
+      <Inner>
+        <a className="brand" href="#main" aria-label="PeopleLens home">
+          <Mark>PL</Mark>
+          <span>
+            <strong>PeopleLens</strong>
+            <small>PeopleOps signal board</small>
+          </span>
+        </a>
+        <span className="demo-badge">Fictional demo data</span>
+      </Inner>
+    </Shell>
   );
 }
