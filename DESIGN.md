@@ -1,44 +1,50 @@
 # PeopleLens visual direction
 
-PeopleLens uses a **neon 3D signal-board** visual language: modern, immersive, and deliberately product-specific rather than generic AI/SaaS chrome.
+PeopleLens uses a **focused signal-board** visual language. The interface stays futuristic, but the identity comes from lens, scan, capacity, and people-discovery metaphors rather than generic cyberpunk decoration.
 
 ## Design signature
 
-- deep midnight canvas with restrained electric mint, cyan, violet, coral and gold signals
-- the PeopleLens mark behaves like an illuminated optical lens, not a generic app icon
-- glass surfaces are limited to priority interaction zones instead of coating every component
-- people cards use semantic team neon accents and true perspective depth
-- pointer-aware cards react to cursor position with subtle 3D tilt and moving light
-- hierarchy comes from scale, depth, light, spacing, and information density rather than decorative clutter
+- deep midnight canvas with restrained mint, cyan, coral, violet, and gold used as semantic signals
+- the PeopleLens mark behaves like an optical lens and remains the primary visual motif
+- a subtle concentric scan field replaces generic full-screen aurora decoration
+- neon is concentrated in status, focus, team identity, and scanning cues instead of coating every surface
+- people cards retain pointer-aware perspective depth, but use quieter solid surfaces
+- capacity, shortlist, team, and directory actions remain visually distinct without turning every element into a glowing card
+- profile management follows conventional company-product hierarchy: one primary Add action plus per-profile action menus
 
 ## Motion system
 
-- hero copy enters with depth and blur resolving into focus
-- the signal module floats slowly in 3D space
+- hero copy enters with depth resolving into focus
+- the current-signal module uses a restrained scan line and low-amplitude 3D float
 - metric blocks and people cards reveal with short staggered transitions
-- the background aurora and orbital lens elements move independently at low amplitude
+- pointer-aware cards react subtly to cursor position
 - hover motion runs only on devices with hover capability
-- all decorative animation and 3D transforms collapse when prefers-reduced-motion is enabled
+- all decorative animation and 3D transforms collapse when `prefers-reduced-motion` is enabled
 
 ## Interaction principles
 
+- one persistent primary CTA per task
+- destructive actions live behind a clearly named profile menu and explicit confirmation
 - animation reinforces hierarchy and spatial relationships rather than delaying tasks
-- neon is used as signal, status, focus and identity—not as text decoration everywhere
+- neon is signal, status, focus, and identity—not decoration everywhere
 - keyboard focus remains explicit and high contrast
 - status never relies on color alone
 - form controls retain familiar shapes and readable labels
 - mobile intentionally disables pointer tilt and reduces visual motion
 
-## Avoid
+## Anti-sameness rules
 
-- full-screen particle effects
-- constant high-speed motion
-- unreadable glow-heavy text
-- blue-purple gradient treatment on every component
+Avoid:
+
+- blue-purple gradient text as the default visual signature
 - universal glassmorphism
-- decorative 3D that changes layout or blocks interaction
-- animation without a reduced-motion fallback
+- full-screen aurora blobs
+- glow around every card and button
+- duplicate primary CTAs
+- floating decorative cards with no product meaning
+- sparkles, “AI magic” iconography, or vague futuristic ornaments
+- 3D effects that do not map to focus, scan, signal, or directory interaction
 
 ## Product character
 
-PeopleLens should feel like a compact operations instrument: focused, futuristic and responsive. The interface can be visually expressive while remaining immediately scannable and credible as a real PeopleOps tool.
+PeopleLens should feel like a compact operations instrument: focused, modern, responsive, and specific to people discovery. Visual novelty comes from the lens/scan system and interaction model rather than from generic AI-generated SaaS aesthetics.
