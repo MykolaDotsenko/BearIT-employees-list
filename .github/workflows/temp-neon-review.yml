@@ -38,6 +38,7 @@ jobs:
             deviceScaleFactor: 1,
           });
           await desktop.goto("http://127.0.0.1:4173/people-lens/", { waitUntil: "networkidle" });
+          await desktop.waitForTimeout(1400);
           await desktop.screenshot({ path: "review/desktop.png", fullPage: false });
 
           const mobile = await browser.newPage({
@@ -45,6 +46,7 @@ jobs:
             deviceScaleFactor: 1,
           });
           await mobile.goto("http://127.0.0.1:4173/people-lens/", { waitUntil: "networkidle" });
+          await mobile.waitForTimeout(1400);
           await mobile.screenshot({ path: "review/mobile.png", fullPage: false });
 
           await browser.close();
