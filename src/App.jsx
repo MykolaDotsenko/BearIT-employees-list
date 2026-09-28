@@ -53,13 +53,7 @@ export default function App() {
   }, [notice]);
 
   const teams = useMemo(() => getTeams(people), [people]);
-
-  useEffect(() => {
-    if (team !== "all" && !teams.includes(team)) {
-      setTeam("all");
-    }
-  }, [team, teams]);
-
+  const activeTeam = team === "all" || teams.includes(team) ? team : "all";
   const stats = useMemo(() => getPeopleStats(people), [people]);
   const visiblePeople = useMemo(
     () =>
@@ -67,18 +61,18 @@ export default function App() {
         people,
         {
           query,
-          team,
+          team: activeTeam,
           availability,
           sortBy,
         },
         pinnedIds,
       ),
-    [availability, people, pinnedIds, query, sortBy, team],
+    [activeTeam, availability, people, pinnedIds, query, sortBy],
   );
 
   const pinned = useMemo(() => new Set(pinnedIds), [pinnedIds]);
   const hasActiveFilters = Boolean(
-    query || team !== "all" || availability !== "all" || sortBy !== "name",
+    query || activeTeam !== "all" || availability !== "all" || sortBy !== "name",
   );
 
   const closeDialog = useCallback(() => {
@@ -194,7 +188,7 @@ export default function App() {
 
         <FilterBar
           query={query}
-          team={team}
+          team={activeTeam}
           availability={availability}
           sortBy={sortBy}
           teams={teams}
@@ -259,13 +253,15 @@ export default function App() {
         </footer>
       </main>
 
-      <PersonDialog
-        open={dialog.open}
-        person={dialog.person}
-        onClose={closeDialog}
-        onSave={savePerson}
-        onDelete={deletePerson}
-      />
+      {dialog.open && (
+        <PersonDialog
+          key={dialog.person?.id ?? "new-person"}
+          person={dialog.person}
+          onClose={closeDialog}
+          onSave={savePerson}
+          onDelete={deletePerson}
+        />
+      )}
 
       <div className={notice ? "app-toast app-toast-visible" : "app-toast"} role="status" aria-live="polite">
         {notice}
