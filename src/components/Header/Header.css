@@ -3,8 +3,8 @@
   top: 0;
   z-index: 40;
   border-bottom: 1px solid rgba(151, 168, 193, 0.12);
-  background: rgba(7, 11, 18, 0.68);
-  backdrop-filter: blur(22px) saturate(135%);
+  background: rgba(7, 11, 18, 0.94);
+  backdrop-filter: blur(10px);
 }
 
 .site-header::after {
@@ -14,8 +14,8 @@
   right: 0;
   bottom: -1px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(111,255,194,.45), rgba(99,216,255,.45), transparent);
-  opacity: .65;
+  background: linear-gradient(90deg, transparent, rgba(111,255,194,.32), transparent);
+  opacity: .72;
 }
 
 .site-header-inner {
