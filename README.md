@@ -22,7 +22,7 @@ Built with React around explicit state ownership, pure discovery logic, resilien
 - reduced-motion and forced-colors support
 - zero network dependency at runtime
 
-All employee names, roles, capacity figures, and staffing statuses are **fictional demo data**. This project does not represent BearIT personnel or internal company data.
+All profiles, roles, capacity figures, and staffing statuses are **fictional demo data** and do not represent any real employer or personnel records.
 
 ## Stack
 
