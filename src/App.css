@@ -148,19 +148,8 @@ main {
 }
 
 .hero h1 span {
-  position: relative;
   color: #d9fff0;
-}
-
-.hero h1 span::after {
-  content: "";
-  position: absolute;
-  left: 0.04em;
-  right: 0.04em;
-  bottom: -0.08em;
-  height: 2px;
-  background: linear-gradient(90deg, var(--neon), rgba(99,216,255,.5), transparent);
-  opacity: .65;
+  text-shadow: 0 0 24px rgba(111,255,194,.045);
 }
 
 .hero-copy {
@@ -282,6 +271,15 @@ main {
   animation: metric-enter 650ms cubic-bezier(.2,.8,.2,1) both;
 }
 
+.stats-grid article {
+  --metric-accent: var(--neon);
+}
+
+.stats-grid article:nth-child(1) { --metric-accent: var(--cyan); }
+.stats-grid article:nth-child(2) { --metric-accent: var(--neon); }
+.stats-grid article:nth-child(3) { --metric-accent: var(--gold); }
+.stats-grid article:nth-child(4) { --metric-accent: var(--violet); }
+
 .stats-grid article::before {
   content: "";
   position: absolute;
@@ -289,7 +287,8 @@ main {
   top: .65rem;
   bottom: .65rem;
   width: 2px;
-  background: rgba(111,255,194,.58);
+  background: var(--metric-accent);
+  opacity: .76;
 }
 
 .stats-grid article:nth-child(2) { animation-delay: 70ms; }
@@ -303,7 +302,7 @@ main {
   top: .7rem;
   width: .38rem;
   height: .38rem;
-  border: 1px solid rgba(99,216,255,.42);
+  border: 1px solid color-mix(in srgb, var(--metric-accent) 68%, transparent);
   border-radius: 50%;
   pointer-events: none;
 }
@@ -897,14 +896,14 @@ main {
   }
 
   .hero h1 {
-    font-size: clamp(2.45rem, 11vw, 3.3rem);
-    line-height: 0.97;
+    font-size: clamp(2.15rem, 9.4vw, 2.85rem);
+    line-height: 0.98;
   }
 
   .hero-copy {
-    margin-top: 0.75rem;
-    font-size: 0.97rem;
-    line-height: 1.5;
+    margin-top: 0.7rem;
+    font-size: 0.93rem;
+    line-height: 1.48;
   }
 
   .hero-signal {
