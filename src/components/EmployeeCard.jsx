@@ -7,7 +7,7 @@ export default function EmployeeCard({ person, pinned, onTogglePinned }) {
     : "Add " + person.name + " to shortlist";
 
   return (
-    <article className="person-card">
+    <article className="person-card" data-team={person.team.toLowerCase()}>
       <div className="person-card-top">
         <div className="avatar" aria-hidden="true">
           {getInitials(person.name)}
