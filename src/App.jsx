@@ -263,7 +263,11 @@ export default function App() {
         />
       )}
 
-      <div className={notice ? "app-toast app-toast-visible" : "app-toast"} role="status" aria-live="polite">
+      <div
+        className={notice ? "app-toast app-toast-visible" : "app-toast"}
+        aria-live="polite"
+        aria-atomic="true"
+      >
         {notice}
       </div>
     </>
