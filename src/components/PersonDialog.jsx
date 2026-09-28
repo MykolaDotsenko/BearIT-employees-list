@@ -27,7 +27,7 @@ function toFormValue(person) {
   };
 }
 
-export default function PersonDialog({ open, person, onClose, onSave, onDelete }) {
+export default function PersonDialog({ person, onClose, onSave, onDelete }) {
   const titleId = useId();
   const descriptionId = useId();
   const dialogRef = useRef(null);
@@ -37,12 +37,6 @@ export default function PersonDialog({ open, person, onClose, onSave, onDelete }
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   useEffect(() => {
-    if (!open) return;
-
-    setForm(toFormValue(person));
-    setErrors({});
-    setConfirmDelete(false);
-
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
@@ -81,9 +75,7 @@ export default function PersonDialog({ open, person, onClose, onSave, onDelete }
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [open, person, onClose]);
-
-  if (!open) return null;
+  }, [onClose]);
 
   const isEditing = Boolean(person);
 
