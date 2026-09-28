@@ -1,4 +1,5 @@
-const STORAGE_KEY = "people-lens:people:v1";
+const PEOPLE_STORAGE_KEY = "people-lens:people:v1";
+const REMOVED_STORAGE_KEY = "people-lens:removed:v1";
 
 const allowedAvailability = new Set(["available", "focused", "away"]);
 const allowedWorkModes = new Set(["Hybrid", "Remote", "On-site"]);
@@ -50,11 +51,28 @@ export function sanitizeManagedPerson(value) {
   };
 }
 
+export function mergeWorkspacePeople(seedPeople, managedPeople, removedIds = []) {
+  const removed = new Set(removedIds);
+  const merged = new Map(
+    seedPeople
+      .filter((person) => !removed.has(person.id))
+      .map((person) => [person.id, person]),
+  );
+
+  for (const person of managedPeople) {
+    if (!removed.has(person.id)) {
+      merged.set(person.id, person);
+    }
+  }
+
+  return [...merged.values()];
+}
+
 export function loadManagedPeople() {
   if (typeof window === "undefined") return [];
 
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const raw = window.localStorage.getItem(PEOPLE_STORAGE_KEY);
     if (!raw) return [];
 
     const parsed = JSON.parse(raw);
@@ -78,8 +96,37 @@ export function saveManagedPeople(people) {
     const safe = Array.isArray(people)
       ? people.map(sanitizeManagedPerson).filter(Boolean)
       : [];
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(safe));
+    window.localStorage.setItem(PEOPLE_STORAGE_KEY, JSON.stringify(safe));
   } catch {
     // Local persistence is an enhancement; the directory remains usable without it.
+  }
+}
+
+export function loadRemovedPersonIds() {
+  if (typeof window === "undefined") return [];
+
+  try {
+    const raw = window.localStorage.getItem(REMOVED_STORAGE_KEY);
+    if (!raw) return [];
+
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+
+    return [...new Set(parsed.map((id) => cleanText(id, 120)).filter(Boolean))];
+  } catch {
+    return [];
+  }
+}
+
+export function saveRemovedPersonIds(ids) {
+  if (typeof window === "undefined") return;
+
+  try {
+    const safe = Array.isArray(ids)
+      ? [...new Set(ids.map((id) => cleanText(id, 120)).filter(Boolean))]
+      : [];
+    window.localStorage.setItem(REMOVED_STORAGE_KEY, JSON.stringify(safe));
+  } catch {
+    // Removal state is local-only and non-critical.
   }
 }
