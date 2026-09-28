@@ -80,26 +80,6 @@
 }
 
 
-@keyframes lens-pulse {
-  0%, 100% {
-    box-shadow:
-      0 0 0 4px rgba(111,255,194,.04),
-      0 0 26px rgba(111,255,194,.16);
-  }
-  50% {
-    box-shadow:
-      0 0 0 7px rgba(111,255,194,.07),
-      0 0 38px rgba(111,255,194,.28);
-  }
-}
-
-
-.brand-cluster,
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-}
 
 
 .brand:hover .brand-mark,
