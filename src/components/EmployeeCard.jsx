@@ -1,6 +1,6 @@
 import { availabilityLabel, getInitials } from "../domain/people.js";
 
-export default function EmployeeCard({ person, pinned, onTogglePinned }) {
+export default function EmployeeCard({ person, pinned, onTogglePinned, onEdit }) {
   const status = availabilityLabel(person.availability);
 
   function handlePointerMove(event) {
@@ -24,6 +24,7 @@ export default function EmployeeCard({ person, pinned, onTogglePinned }) {
     card.style.setProperty("--glow-x", "50%");
     card.style.setProperty("--glow-y", "15%");
   }
+
   const shortlistLabel = pinned
     ? "Remove " + person.name + " from shortlist"
     : "Add " + person.name + " to shortlist";
@@ -40,16 +41,30 @@ export default function EmployeeCard({ person, pinned, onTogglePinned }) {
           {getInitials(person.name)}
         </div>
 
-        <button
-          className="pin-button"
-          type="button"
-          aria-pressed={pinned}
-          aria-label={shortlistLabel}
-          onClick={() => onTogglePinned(person.id)}
-        >
-          <span aria-hidden="true">{pinned ? "★" : "☆"}</span>
-          <span>{pinned ? "Shortlisted" : "Shortlist"}</span>
-        </button>
+        <div className="person-card-actions">
+          {onEdit && (
+            <button
+              className="manage-button"
+              type="button"
+              aria-label={"Edit " + person.name}
+              onClick={() => onEdit(person)}
+            >
+              <span aria-hidden="true">✎</span>
+              <span>Edit</span>
+            </button>
+          )}
+
+          <button
+            className="pin-button"
+            type="button"
+            aria-pressed={pinned}
+            aria-label={shortlistLabel}
+            onClick={() => onTogglePinned(person.id)}
+          >
+            <span aria-hidden="true">{pinned ? "★" : "☆"}</span>
+            <span>{pinned ? "Shortlisted" : "Shortlist"}</span>
+          </button>
+        </div>
       </div>
 
       <div className="person-heading">
