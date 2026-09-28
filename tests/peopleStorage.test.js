@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { sanitizeManagedPerson } from "../src/storage/peopleStorage.js";
+import { mergeWorkspacePeople, sanitizeManagedPerson } from "../src/storage/peopleStorage.js";
 
 test("managed people are normalized and constrained before persistence", () => {
   assert.deepEqual(
@@ -68,5 +68,25 @@ test("managed people reject incomplete data and fall back to safe enums", () => 
       skills: ["React"],
       managed: true,
     },
+  );
+});
+
+
+test("workspace merge supports seed overrides, additions, and persistent removals", () => {
+  const seed = [
+    { id: "seed-a", name: "Seed A" },
+    { id: "seed-b", name: "Seed B" },
+  ];
+  const managed = [
+    { id: "seed-a", name: "Edited A", managed: true },
+    { id: "local-c", name: "Local C", managed: true },
+  ];
+
+  assert.deepEqual(
+    mergeWorkspacePeople(seed, managed, ["seed-b"]),
+    [
+      { id: "seed-a", name: "Edited A", managed: true },
+      { id: "local-c", name: "Local C", managed: true },
+    ],
   );
 });
