@@ -8,6 +8,8 @@ Built with React around explicit state ownership, pure discovery logic, resilien
 
 [**Open the live demo →**](https://mykoladotsenko.github.io/people-lens/)
 
+![PeopleLens directory showing search, team filters, availability, capacity signals, and a saved shortlist](./docs/screenshots/people-lens-home.png)
+
 ## Product capabilities
 
 - full-directory search across names, roles, skills, teams, locations, and work modes
