@@ -176,23 +176,22 @@ export default function App() {
         <section className="hero" aria-labelledby="hero-title">
           <div className="hero-orbit" aria-hidden="true" />
           <div className="hero-copy-block">
-            <p className="eyebrow">People intelligence, without the noise</p>
+            <p className="eyebrow">Internal staffing, without the spreadsheet hunt</p>
             <h1 id="hero-title">
-              See <span>capacity, skills, and availability</span> in one focused view.
+              Find the teammate who can <span>actually take the work.</span>
             </h1>
             <p className="hero-copy">
-              PeopleLens is a compact PeopleOps directory built around one job:
-              finding the right teammate quickly without turning a small product
-              into a heavy HR platform.
+              Search by role, skills, team and location, then compare availability
+              and near-term capacity before adding someone to the shortlist.
             </p>
           </div>
 
           <div className="hero-signal" aria-label="Current directory signal">
-            <span className="signal-index">Current signal</span>
+            <span className="signal-index">Staffing snapshot</span>
             <div>
               <strong>{stats.available} available</strong>
-              <span>people ready for near-term work</span>
-              <small>across {stats.teams} disciplines</small>
+              <span>people currently open to near-term work</span>
+              <small>across {stats.teams} teams</small>
             </div>
           </div>
         </section>
