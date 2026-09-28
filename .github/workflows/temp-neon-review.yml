@@ -5,8 +5,12 @@ on:
     branches:
       - design/neon-3d-people-lens
 
+permissions:
+  contents: write
+
 jobs:
   review:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -51,8 +55,16 @@ jobs:
 
           await browser.close();
           EOF
-      - uses: actions/upload-artifact@v4
-        with:
-          name: neon-design-review
-          path: review
-          retention-days: 1
+      - name: Refresh README screenshot
+        run: |
+          cp review/desktop.png docs/screenshots/people-lens-home.png
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/screenshots/people-lens-home.png
+          if git diff --cached --quiet; then
+            echo "README screenshot unchanged"
+            exit 0
+          fi
+          git commit -m "docs: refresh PeopleLens neon preview"
+          git pull --rebase origin ${{ github.ref_name }}
+          git push origin HEAD:${{ github.ref_name }}
