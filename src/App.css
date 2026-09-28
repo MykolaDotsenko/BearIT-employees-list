@@ -1,7 +1,7 @@
 main {
   width: min(1180px, calc(100% - 2rem));
   margin: 0 auto;
-  padding: 3.75rem 0 2.5rem;
+  padding: 2.8rem 0 2.5rem;
 }
 
 .skip-link {
@@ -69,7 +69,7 @@ main {
   gap: 2.5rem;
   align-items: end;
   border-bottom: 1px solid var(--line);
-  padding: 2.75rem 0 2.6rem;
+  padding: 1.9rem 0 1.85rem;
 }
 
 .eyebrow {
@@ -92,17 +92,17 @@ main {
 }
 
 .hero h1 {
-  max-width: 900px;
-  font-size: clamp(3rem, 7vw, 6.2rem);
+  max-width: 780px;
+  font-size: clamp(2.8rem, 5vw, 4.6rem);
   line-height: 0.93;
 }
 
 .hero-copy {
   max-width: 690px;
-  margin: 1.35rem 0 0;
+  margin: 0.95rem 0 0;
   color: #4f5a52;
   font-size: clamp(1rem, 2vw, 1.12rem);
-  line-height: 1.65;
+  line-height: 1.58;
 }
 
 .hero-signal {
@@ -157,7 +157,7 @@ main {
 .stats-grid article {
   display: grid;
   gap: 0.16rem;
-  padding: 1rem 1.15rem 1.15rem;
+  padding: 0.78rem 1rem 0.85rem;
   border-left: 1px solid var(--line);
 }
 
@@ -180,7 +180,7 @@ main {
 
 .stats-grid strong {
   color: var(--ink);
-  font-size: 1.85rem;
+  font-size: 1.62rem;
   letter-spacing: -0.05em;
 }
 
@@ -276,7 +276,7 @@ main {
 }
 
 .results-heading {
-  margin: 2.45rem 0 1rem;
+  margin: 1.85rem 0 0.9rem;
 }
 
 .result-count {
@@ -574,7 +574,7 @@ main {
 @media (max-width: 620px) {
   main {
     width: min(100% - 1rem, 1180px);
-    padding-top: 2.4rem;
+    padding-top: 1.8rem;
   }
 
   .demo-badge {
@@ -583,12 +583,12 @@ main {
 
   .hero {
     gap: 1.75rem;
-    padding-top: 2rem;
+    padding-top: 1.35rem;
     padding-bottom: 2.1rem;
   }
 
   .hero h1 {
-    font-size: clamp(2.7rem, 13vw, 4.2rem);
+    font-size: clamp(2.55rem, 12vw, 3.7rem);
   }
 
   .stats-grid,
