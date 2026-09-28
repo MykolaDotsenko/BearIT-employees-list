@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 import { availabilityLabel, getInitials } from "../domain/people.js";
 
@@ -10,14 +11,20 @@ export default function EmployeeCard({
   onRequestRemove,
 }) {
   const status = availabilityLabel(person.availability);
+  const menuId = useId();
+  const triggerRef = useRef(null);
+  const portalRef = useRef(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef(null);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
     if (!menuOpen) return undefined;
 
     function handlePointerDown(event) {
-      if (!menuRef.current?.contains(event.target)) {
+      const insideTrigger = triggerRef.current?.contains(event.target);
+      const insideMenu = portalRef.current?.contains(event.target);
+
+      if (!insideTrigger && !insideMenu) {
         setMenuOpen(false);
       }
     }
@@ -25,13 +32,13 @@ export default function EmployeeCard({
     function handleKeyDown(event) {
       if (event.key === "Escape") {
         setMenuOpen(false);
-        menuRef.current?.querySelector(".profile-menu-trigger")?.focus();
+        triggerRef.current?.focus();
         return;
       }
 
       if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
 
-      const items = [...(menuRef.current?.querySelectorAll('[role="menuitem"]') ?? [])];
+      const items = [...(portalRef.current?.querySelectorAll('[role="menuitem"]') ?? [])];
       if (items.length === 0) return;
 
       event.preventDefault();
@@ -48,12 +55,20 @@ export default function EmployeeCard({
       }
     }
 
+    function closeOnViewportChange() {
+      setMenuOpen(false);
+    }
+
     document.addEventListener("pointerdown", handlePointerDown);
     window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("resize", closeOnViewportChange);
+    window.addEventListener("scroll", closeOnViewportChange, true);
 
     return () => {
       document.removeEventListener("pointerdown", handlePointerDown);
       window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("resize", closeOnViewportChange);
+      window.removeEventListener("scroll", closeOnViewportChange, true);
     };
   }, [menuOpen]);
 
@@ -79,134 +94,172 @@ export default function EmployeeCard({
     card.style.setProperty("--glow-y", "15%");
   }
 
+  function openMenu() {
+    const trigger = triggerRef.current;
+    if (!trigger) return;
+
+    const rect = trigger.getBoundingClientRect();
+    const width = 210;
+    const estimatedHeight = 104;
+    const margin = 12;
+    const gap = 8;
+
+    const left = Math.max(
+      margin,
+      Math.min(rect.right - width, window.innerWidth - width - margin),
+    );
+
+    const roomBelow = window.innerHeight - rect.bottom;
+    const top =
+      roomBelow >= estimatedHeight + gap + margin
+        ? rect.bottom + gap
+        : Math.max(margin, rect.top - estimatedHeight - gap);
+
+    setMenuPosition({ top, left });
+    setMenuOpen(true);
+
+    window.setTimeout(
+      () => portalRef.current?.querySelector('[role="menuitem"]')?.focus(),
+      0,
+    );
+  }
+
   const shortlistLabel = pinned
     ? "Remove " + person.name + " from shortlist"
     : "Add " + person.name + " to shortlist";
 
-  return (
-    <article
-      className="person-card"
-      data-team={person.team.toLowerCase()}
-      onPointerMove={handlePointerMove}
-      onPointerLeave={handlePointerLeave}
-    >
-      <div className="person-card-top">
-        <div className="avatar" aria-hidden="true">
-          {getInitials(person.name)}
-        </div>
-
-        <div className="person-card-actions">
+  const menu = menuOpen
+    ? createPortal(
+        <div
+          ref={portalRef}
+          id={menuId}
+          className="profile-menu-popover"
+          role="menu"
+          aria-label={"Profile actions for " + person.name}
+          style={{ top: menuPosition.top, left: menuPosition.left }}
+        >
           <button
-            className="pin-button"
             type="button"
-            aria-pressed={pinned}
-            aria-label={shortlistLabel}
-            onClick={() => onTogglePinned(person.id)}
+            role="menuitem"
+            onClick={() => {
+              setMenuOpen(false);
+              onEdit(person);
+            }}
           >
-            <span aria-hidden="true">{pinned ? "★" : "☆"}</span>
-            <span>{pinned ? "Shortlisted" : "Shortlist"}</span>
+            <span aria-hidden="true">✎</span>
+            Edit profile
           </button>
+          <button
+            className="profile-menu-danger"
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              setMenuOpen(false);
+              onRequestRemove(person);
+            }}
+          >
+            <span aria-hidden="true">−</span>
+            Remove from directory
+          </button>
+        </div>,
+        document.body,
+      )
+    : null;
 
-          <div className="profile-menu" ref={menuRef}>
+  return (
+    <>
+      <article
+        className="person-card"
+        data-team={person.team.toLowerCase()}
+        onPointerMove={handlePointerMove}
+        onPointerLeave={handlePointerLeave}
+      >
+        <div className="person-card-top">
+          <div className="avatar" aria-hidden="true">
+            {getInitials(person.name)}
+          </div>
+
+          <div className="person-card-actions">
             <button
+              className="pin-button"
+              type="button"
+              aria-pressed={pinned}
+              aria-label={shortlistLabel}
+              onClick={() => onTogglePinned(person.id)}
+            >
+              <span aria-hidden="true">{pinned ? "★" : "☆"}</span>
+              <span>{pinned ? "Shortlisted" : "Shortlist"}</span>
+            </button>
+
+            <button
+              ref={triggerRef}
               className="profile-menu-trigger"
               type="button"
               aria-haspopup="menu"
+              aria-controls={menuOpen ? menuId : undefined}
               aria-expanded={menuOpen}
               aria-label={"Actions for " + person.name}
               onClick={() => {
-                setMenuOpen((open) => {
-                  const next = !open;
-                  if (next) {
-                    window.setTimeout(
-                      () => menuRef.current?.querySelector('[role="menuitem"]')?.focus(),
-                      0,
-                    );
-                  }
-                  return next;
-                });
+                if (menuOpen) {
+                  setMenuOpen(false);
+                } else {
+                  openMenu();
+                }
               }}
             >
               <span aria-hidden="true">⋯</span>
             </button>
-
-            {menuOpen && (
-              <div className="profile-menu-popover" role="menu">
-                <button
-                  type="button"
-                  role="menuitem"
-                  onClick={() => {
-                    setMenuOpen(false);
-                    onEdit(person);
-                  }}
-                >
-                  <span aria-hidden="true">✎</span>
-                  Edit profile
-                </button>
-                <button
-                  className="profile-menu-danger"
-                  type="button"
-                  role="menuitem"
-                  onClick={() => {
-                    setMenuOpen(false);
-                    onRequestRemove(person);
-                  }}
-                >
-                  <span aria-hidden="true">−</span>
-                  Remove from directory
-                </button>
-              </div>
-            )}
           </div>
         </div>
-      </div>
 
-      <div className="person-heading">
-        <div>
-          <h3>{person.name}</h3>
-          <p>{person.role}</p>
+        <div className="person-heading">
+          <div>
+            <h3>{person.name}</h3>
+            <p>{person.role}</p>
+          </div>
+          <span className={"status status-" + person.availability}>
+            <span className="status-dot" aria-hidden="true" />
+            {status}
+          </span>
         </div>
-        <span className={"status status-" + person.availability}>
-          <span className="status-dot" aria-hidden="true" />
-          {status}
-        </span>
-      </div>
 
-      <dl className="person-meta">
-        <div>
-          <dt>Team</dt>
-          <dd>{person.team}</dd>
-        </div>
-        <div>
-          <dt>Location</dt>
-          <dd>{person.location}</dd>
-        </div>
-        <div>
-          <dt>Work mode</dt>
-          <dd>{person.workMode}</dd>
-        </div>
-      </dl>
+        <dl className="person-meta">
+          <div>
+            <dt>Team</dt>
+            <dd>{person.team}</dd>
+          </div>
+          <div>
+            <dt>Location</dt>
+            <dd>{person.location}</dd>
+          </div>
+          <div>
+            <dt>Work mode</dt>
+            <dd>{person.workMode}</dd>
+          </div>
+        </dl>
 
-      <div className="capacity-row">
-        <div>
-          <span>Near-term capacity</span>
-          <strong>{person.capacity}%</strong>
+        <div className="capacity-row">
+          <div>
+            <span>Near-term capacity</span>
+            <strong>{person.capacity}%</strong>
+          </div>
+          <meter
+            min="0"
+            max="100"
+            value={person.capacity}
+            aria-label={person.name + " capacity " + person.capacity + "%"}
+          >
+            {person.capacity}%
+          </meter>
         </div>
-        <meter
-          min="0"
-          max="100"
-          value={person.capacity}
-          aria-label={person.name + " capacity " + person.capacity + "%"}
-        >
-          {person.capacity}%
-        </meter>
-      </div>
 
-      <ul className="skill-list" aria-label={person.name + " skills"}>
-        {person.skills.map((skill) => (
-          <li key={skill}>{skill}</li>
-        ))}
-      </ul>
-    </article>
+        <ul className="skill-list" aria-label={person.name + " skills"}>
+          {person.skills.map((skill) => (
+            <li key={skill}>{skill}</li>
+          ))}
+        </ul>
+      </article>
+      {menu}
+    </>
   );
 }
