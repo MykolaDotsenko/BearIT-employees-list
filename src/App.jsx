@@ -5,9 +5,16 @@ import EmployeeCard from "./components/EmployeeCard.jsx";
 import FilterBar from "./components/FilterBar.jsx";
 import Header from "./components/Header/Header.jsx";
 import PersonDialog from "./components/PersonDialog.jsx";
+import RemovePersonDialog from "./components/RemovePersonDialog.jsx";
 import { employees } from "./data.js";
 import { getPeopleStats, getTeams, selectPeople } from "./domain/people.js";
-import { loadManagedPeople, saveManagedPeople } from "./storage/peopleStorage.js";
+import {
+  loadManagedPeople,
+  loadRemovedPersonIds,
+  mergeWorkspacePeople,
+  saveManagedPeople,
+  saveRemovedPersonIds,
+} from "./storage/peopleStorage.js";
 import { loadPinnedIds, savePinnedIds } from "./storage/pinnedStorage.js";
 
 function createManagedId(name) {
@@ -24,17 +31,26 @@ function createManagedId(name) {
 
 export default function App() {
   const [managedPeople, setManagedPeople] = useState(() => loadManagedPeople());
-  const people = useMemo(() => [...employees, ...managedPeople], [managedPeople]);
+  const [removedIds, setRemovedIds] = useState(() => loadRemovedPersonIds());
+  const people = useMemo(
+    () => mergeWorkspacePeople(employees, managedPeople, removedIds),
+    [managedPeople, removedIds],
+  );
 
   const [query, setQuery] = useState("");
   const [team, setTeam] = useState("all");
   const [availability, setAvailability] = useState("all");
   const [sortBy, setSortBy] = useState("name");
   const [pinnedIds, setPinnedIds] = useState(() => {
-    const initialPeople = [...employees, ...loadManagedPeople()];
+    const initialPeople = mergeWorkspacePeople(
+      employees,
+      loadManagedPeople(),
+      loadRemovedPersonIds(),
+    );
     return loadPinnedIds(initialPeople.map((person) => person.id));
   });
   const [dialog, setDialog] = useState({ open: false, person: null });
+  const [removeTarget, setRemoveTarget] = useState(null);
   const [notice, setNotice] = useState("");
 
   useEffect(() => {
@@ -44,6 +60,10 @@ export default function App() {
   useEffect(() => {
     saveManagedPeople(managedPeople);
   }, [managedPeople]);
+
+  useEffect(() => {
+    saveRemovedPersonIds(removedIds);
+  }, [removedIds]);
 
   useEffect(() => {
     if (!notice) return undefined;
@@ -79,6 +99,10 @@ export default function App() {
     setDialog({ open: false, person: null });
   }, []);
 
+  const closeRemoveDialog = useCallback(() => {
+    setRemoveTarget(null);
+  }, []);
+
   function openCreatePerson() {
     setDialog({ open: true, person: null });
   }
@@ -88,12 +112,14 @@ export default function App() {
   }
 
   function savePerson(person) {
-    if (person.id && person.managed) {
+    if (person.id) {
+      const updated = { ...person, managed: true };
       setManagedPeople((current) =>
-        current.map((entry) =>
-          entry.id === person.id ? { ...person, managed: true } : entry,
-        ),
+        current.some((entry) => entry.id === person.id)
+          ? current.map((entry) => (entry.id === person.id ? updated : entry))
+          : [...current, updated],
       );
+      setRemovedIds((current) => current.filter((id) => id !== person.id));
       setNotice(`${person.name} updated`);
     } else {
       const created = {
@@ -109,10 +135,18 @@ export default function App() {
   }
 
   function deletePerson(id) {
-    const person = managedPeople.find((entry) => entry.id === id);
+    const person = people.find((entry) => entry.id === id);
+    const isSeedProfile = employees.some((entry) => entry.id === id);
+
     setManagedPeople((current) => current.filter((entry) => entry.id !== id));
+    if (isSeedProfile) {
+      setRemovedIds((current) =>
+        current.includes(id) ? current : [...current, id],
+      );
+    }
     setPinnedIds((current) => current.filter((entryId) => entryId !== id));
     closeDialog();
+    closeRemoveDialog();
     setNotice(person ? `${person.name} removed` : "Profile removed");
   }
 
@@ -205,15 +239,9 @@ export default function App() {
             <p className="eyebrow">Directory</p>
             <h2>People</h2>
           </div>
-          <div className="results-actions">
-            <p className="result-count" role="status" aria-live="polite">
-              {visiblePeople.length} {visiblePeople.length === 1 ? "match" : "matches"}
-            </p>
-            <button className="inline-add-button" type="button" onClick={openCreatePerson}>
-              <span aria-hidden="true">+</span>
-              Add person
-            </button>
-          </div>
+          <p className="result-count" role="status" aria-live="polite">
+            {visiblePeople.length} {visiblePeople.length === 1 ? "match" : "matches"}
+          </p>
         </div>
 
         {visiblePeople.length > 0 ? (
@@ -224,24 +252,35 @@ export default function App() {
                 person={person}
                 pinned={pinned.has(person.id)}
                 onTogglePinned={togglePinned}
-                onEdit={person.managed ? openEditPerson : undefined}
+                onEdit={openEditPerson}
+                onRequestRemove={setRemoveTarget}
               />
             ))}
           </section>
         ) : (
           <section className="empty-state" aria-labelledby="empty-title">
             <span aria-hidden="true">⌕</span>
-            <h2 id="empty-title">No matching people</h2>
-            <p>Broaden the search or reset the filters to return to the full directory.</p>
-            <button type="button" onClick={resetFilters}>
-              Reset filters
-            </button>
+            <h2 id="empty-title">{people.length === 0 ? "No people yet" : "No matching people"}</h2>
+            <p>
+              {people.length === 0
+                ? "Add a person to start building this local workspace."
+                : "Broaden the search or reset the filters to return to the full directory."}
+            </p>
+            {people.length === 0 ? (
+              <button type="button" onClick={openCreatePerson}>
+                Add person
+              </button>
+            ) : (
+              <button type="button" onClick={resetFilters}>
+                Reset filters
+              </button>
+            )}
           </section>
         )}
 
         <footer className="page-footer">
           <p>
-            Demo workspace · profiles you add or edit are stored only in this browser.
+            Local demo workspace · profile changes are stored only in this browser.
           </p>
           <a
             href="https://github.com/MykolaDotsenko/people-lens"
@@ -259,7 +298,14 @@ export default function App() {
           person={dialog.person}
           onClose={closeDialog}
           onSave={savePerson}
-          onDelete={deletePerson}
+        />
+      )}
+
+      {removeTarget && (
+        <RemovePersonDialog
+          person={removeTarget}
+          onClose={closeRemoveDialog}
+          onConfirm={deletePerson}
         />
       )}
 
