@@ -27,14 +27,13 @@ function toFormValue(person) {
   };
 }
 
-export default function PersonDialog({ person, onClose, onSave, onDelete }) {
+export default function PersonDialog({ person, onClose, onSave }) {
   const titleId = useId();
   const descriptionId = useId();
   const dialogRef = useRef(null);
   const firstInputRef = useRef(null);
   const [form, setForm] = useState(() => toFormValue(person));
   const [errors, setErrors] = useState({});
-  const [confirmDelete, setConfirmDelete] = useState(false);
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
@@ -271,22 +270,6 @@ export default function PersonDialog({ person, onClose, onSave, onDelete }) {
           </div>
 
           <footer className="dialog-actions">
-            {isEditing && (
-              <button
-                className={confirmDelete ? "danger-button danger-confirm" : "danger-button"}
-                type="button"
-                onClick={() => {
-                  if (confirmDelete) {
-                    onDelete(person.id);
-                  } else {
-                    setConfirmDelete(true);
-                  }
-                }}
-              >
-                {confirmDelete ? "Confirm delete" : "Delete profile"}
-              </button>
-            )}
-
             <div className="dialog-actions-primary">
               <button className="secondary-button" type="button" onClick={onClose}>
                 Cancel
