@@ -51,7 +51,7 @@ The domain module is browser-agnostic. Search, filtering, sorting, stats, labels
 
 Persistence is isolated behind a defensive adapter. Only shortlist ids are durable; temporary discovery state remains ephemeral.
 
-See [ARCHITECTURE.md](./ARCHITECTURE.md) for the design rationale.
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for the technical rationale and [DESIGN.md](./DESIGN.md) for the PeopleLens visual language and anti-sameness principles.
 
 ## Quality strategy
 
