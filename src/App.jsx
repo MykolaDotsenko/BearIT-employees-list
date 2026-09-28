@@ -53,6 +53,13 @@ export default function App() {
   }, [notice]);
 
   const teams = useMemo(() => getTeams(people), [people]);
+
+  useEffect(() => {
+    if (team !== "all" && !teams.includes(team)) {
+      setTeam("all");
+    }
+  }, [team, teams]);
+
   const stats = useMemo(() => getPeopleStats(people), [people]);
   const visiblePeople = useMemo(
     () =>
