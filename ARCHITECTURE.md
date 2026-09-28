@@ -43,4 +43,4 @@ The UI uses semantic form controls, labels, native `meter`, explicit pressed sta
 
 ## Scope
 
-The bundled directory is fictional demo data. This repository is a portfolio case study, not an HR system and not a representation of BearIT personnel.
+The bundled directory is fictional demo data. This repository is a portfolio project, not an HR system, and does not represent any real employer or personnel records.
