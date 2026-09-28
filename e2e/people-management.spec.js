@@ -5,7 +5,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 async function addPerson(page, overrides = {}) {
-  await page.locator(".brand-add").click();
+  await page.getByRole("button", { name: "Add person" }).click();
 
   const dialog = page.getByRole("dialog", { name: "Add person" });
   await expect(dialog).toBeVisible();
@@ -21,7 +21,18 @@ async function addPerson(page, overrides = {}) {
   await dialog.getByRole("button", { name: "Add to directory" }).click();
 }
 
-test("plus action creates a real directory profile and updates stats", async ({ page }) => {
+async function openProfileMenu(page, name) {
+  const card = page.locator(".person-card").filter({ hasText: name });
+  await card.getByRole("button", { name: `Actions for ${name}` }).click();
+  return card;
+}
+
+test("there is one persistent Add person CTA and the brand remains home navigation", async ({ page }) => {
+  await expect(page.getByRole("button", { name: "Add person" })).toHaveCount(1);
+  await expect(page.getByRole("link", { name: "PeopleLens home" })).toBeVisible();
+});
+
+test("Add person creates a real directory profile and updates stats", async ({ page }) => {
   await addPerson(page);
 
   await expect(page.getByRole("heading", { name: "Nora Example" })).toBeVisible();
@@ -38,7 +49,7 @@ test("plus action creates a real directory profile and updates stats", async ({ 
   await expect(card).toContainText("Kubernetes");
 });
 
-test("created profiles persist after reload and participate in search and team filters", async ({ page }) => {
+test("created profiles persist and participate in discovery", async ({ page }) => {
   await addPerson(page, {
     name: "Mara Finance",
     role: "Finance Systems Analyst",
@@ -64,11 +75,11 @@ test("created profiles persist after reload and participate in search and team f
   await expect(page.getByRole("status")).toContainText("1 match");
 });
 
-test("locally managed profiles can be edited and deleted", async ({ page }) => {
+test("created profiles can be edited and removed from the card action menu", async ({ page }) => {
   await addPerson(page);
 
-  let card = page.locator(".person-card").filter({ hasText: "Nora Example" });
-  await card.getByRole("button", { name: "Edit Nora Example" }).click();
+  let card = await openProfileMenu(page, "Nora Example");
+  await card.getByRole("menuitem", { name: "Edit profile" }).click();
 
   const dialog = page.getByRole("dialog", { name: "Edit person" });
   await dialog.getByLabel("Role").fill("Principal Platform Engineer");
@@ -81,10 +92,11 @@ test("locally managed profiles can be edited and deleted", async ({ page }) => {
   await expect(card).toContainText("88%");
   await expect(card).toContainText("Reliability");
 
-  await card.getByRole("button", { name: "Edit Nora Example" }).click();
-  const editDialog = page.getByRole("dialog", { name: "Edit person" });
-  await editDialog.getByRole("button", { name: "Delete profile" }).click();
-  await editDialog.getByRole("button", { name: "Confirm delete" }).click();
+  card = await openProfileMenu(page, "Nora Example");
+  await card.getByRole("menuitem", { name: "Remove from directory" }).click();
+
+  const removeDialog = page.getByRole("alertdialog", { name: "Remove Nora Example?" });
+  await removeDialog.getByRole("button", { name: "Remove from directory" }).click();
 
   await expect(page.getByRole("heading", { name: "Nora Example" })).toHaveCount(0);
   await expect(page.locator(".stats-grid article").nth(0)).toContainText("12");
@@ -93,8 +105,40 @@ test("locally managed profiles can be edited and deleted", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Nora Example" })).toHaveCount(0);
 });
 
+test("bundled profiles can be edited and their override persists", async ({ page }) => {
+  const card = await openProfileMenu(page, "Ava Lind");
+  await card.getByRole("menuitem", { name: "Edit profile" }).click();
+
+  const dialog = page.getByRole("dialog", { name: "Edit person" });
+  await dialog.getByLabel("Role").fill("Principal Frontend Engineer");
+  await dialog.getByRole("button", { name: "Save changes" }).click();
+
+  await expect(
+    page.locator(".person-card").filter({ hasText: "Ava Lind" }),
+  ).toContainText("Principal Frontend Engineer");
+
+  await page.reload();
+  await expect(
+    page.locator(".person-card").filter({ hasText: "Ava Lind" }),
+  ).toContainText("Principal Frontend Engineer");
+});
+
+test("bundled profiles can be removed and stay removed after reload", async ({ page }) => {
+  const card = await openProfileMenu(page, "Ava Lind");
+  await card.getByRole("menuitem", { name: "Remove from directory" }).click();
+
+  const removeDialog = page.getByRole("alertdialog", { name: "Remove Ava Lind?" });
+  await removeDialog.getByRole("button", { name: "Remove from directory" }).click();
+
+  await expect(page.getByRole("heading", { name: "Ava Lind" })).toHaveCount(0);
+  await expect(page.locator(".stats-grid article").nth(0)).toContainText("11");
+
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "Ava Lind" })).toHaveCount(0);
+});
+
 test("add-person form validates required fields and Escape closes the dialog", async ({ page }) => {
-  await page.locator(".brand-add").click();
+  await page.getByRole("button", { name: "Add person" }).click();
 
   const dialog = page.getByRole("dialog", { name: "Add person" });
   await dialog.getByRole("button", { name: "Add to directory" }).click();
@@ -108,11 +152,8 @@ test("add-person form validates required fields and Escape closes the dialog", a
   await expect(dialog).toHaveCount(0);
 });
 
-test("built-in profiles remain read-only while created profiles expose management", async ({ page }) => {
-  const builtIn = page.locator(".person-card").filter({ hasText: "Ava Lind" });
-  await expect(builtIn.getByRole("button", { name: /edit ava lind/i })).toHaveCount(0);
-
-  await addPerson(page);
-  const created = page.locator(".person-card").filter({ hasText: "Nora Example" });
-  await expect(created.getByRole("button", { name: "Edit Nora Example" })).toBeVisible();
+test("profile action menu exposes clear edit and destructive actions", async ({ page }) => {
+  const card = await openProfileMenu(page, "Ava Lind");
+  await expect(card.getByRole("menuitem", { name: "Edit profile" })).toBeVisible();
+  await expect(card.getByRole("menuitem", { name: "Remove from directory" })).toBeVisible();
 });
