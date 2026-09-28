@@ -10,7 +10,7 @@ export default function Header({ onAddPerson }) {
           </span>
           <span>
             <strong>PeopleLens</strong>
-            <small>PeopleOps signal board</small>
+            <small>Internal staffing directory</small>
           </span>
         </a>
 
