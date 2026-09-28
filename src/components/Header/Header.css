@@ -95,3 +95,89 @@
       0 0 38px rgba(111,255,194,.28);
   }
 }
+
+
+.brand-cluster,
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.brand-add {
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.brand-add:hover .brand-mark,
+.brand-add:focus-visible .brand-mark {
+  animation: lens-pulse 1.2s ease-in-out infinite;
+  border-color: rgba(111,255,194,.9);
+  box-shadow:
+    0 0 0 5px rgba(111,255,194,.07),
+    0 0 42px rgba(111,255,194,.32),
+    inset 0 0 18px rgba(99,216,255,.08);
+}
+
+.brand-add:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 4px;
+}
+
+.brand-copy {
+  gap: 0;
+}
+
+.header-add-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 40px;
+  border: 1px solid rgba(111,255,194,.34);
+  border-radius: 0.68rem;
+  background:
+    linear-gradient(135deg, rgba(111,255,194,.12), rgba(99,216,255,.08));
+  color: #ddfff0;
+  padding: 0.55rem 0.76rem;
+  font-weight: 850;
+  box-shadow: 0 0 26px rgba(111,255,194,.07);
+  transition:
+    transform 140ms ease,
+    border-color 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.header-add-button > span {
+  color: var(--neon);
+  font-size: 1.05rem;
+}
+
+.header-add-button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(111,255,194,.65);
+  box-shadow: 0 10px 28px rgba(0,0,0,.22), 0 0 28px rgba(111,255,194,.11);
+}
+
+@media (max-width: 620px) {
+  .header-add-button {
+    width: 40px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .header-add-button > span {
+    font-size: 1.35rem;
+  }
+
+  .header-add-button {
+    font-size: 0;
+  }
+
+  .header-add-button > span {
+    font-size: 1.25rem;
+  }
+}
