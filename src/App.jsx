@@ -1,32 +1,63 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import "./App.css";
 import EmployeeCard from "./components/EmployeeCard.jsx";
 import FilterBar from "./components/FilterBar.jsx";
 import Header from "./components/Header/Header.jsx";
+import PersonDialog from "./components/PersonDialog.jsx";
 import { employees } from "./data.js";
 import { getPeopleStats, getTeams, selectPeople } from "./domain/people.js";
+import { loadManagedPeople, saveManagedPeople } from "./storage/peopleStorage.js";
 import { loadPinnedIds, savePinnedIds } from "./storage/pinnedStorage.js";
 
-const validIds = employees.map((person) => person.id);
+function createManagedId(name) {
+  const slug = name
+    .toLocaleLowerCase("en")
+    .normalize("NFKD")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 40) || "person";
+
+  const unique = globalThis.crypto?.randomUUID?.() ?? String(Date.now());
+  return `local-${slug}-${unique}`;
+}
 
 export default function App() {
+  const [managedPeople, setManagedPeople] = useState(() => loadManagedPeople());
+  const people = useMemo(() => [...employees, ...managedPeople], [managedPeople]);
+
   const [query, setQuery] = useState("");
   const [team, setTeam] = useState("all");
   const [availability, setAvailability] = useState("all");
   const [sortBy, setSortBy] = useState("name");
-  const [pinnedIds, setPinnedIds] = useState(() => loadPinnedIds(validIds));
+  const [pinnedIds, setPinnedIds] = useState(() => {
+    const initialPeople = [...employees, ...loadManagedPeople()];
+    return loadPinnedIds(initialPeople.map((person) => person.id));
+  });
+  const [dialog, setDialog] = useState({ open: false, person: null });
+  const [notice, setNotice] = useState("");
 
   useEffect(() => {
     savePinnedIds(pinnedIds);
   }, [pinnedIds]);
 
-  const teams = useMemo(() => getTeams(employees), []);
-  const stats = useMemo(() => getPeopleStats(employees), []);
+  useEffect(() => {
+    saveManagedPeople(managedPeople);
+  }, [managedPeople]);
+
+  useEffect(() => {
+    if (!notice) return undefined;
+
+    const timer = window.setTimeout(() => setNotice(""), 2600);
+    return () => window.clearTimeout(timer);
+  }, [notice]);
+
+  const teams = useMemo(() => getTeams(people), [people]);
+  const stats = useMemo(() => getPeopleStats(people), [people]);
   const visiblePeople = useMemo(
     () =>
       selectPeople(
-        employees,
+        people,
         {
           query,
           team,
@@ -35,13 +66,54 @@ export default function App() {
         },
         pinnedIds,
       ),
-    [availability, pinnedIds, query, sortBy, team],
+    [availability, people, pinnedIds, query, sortBy, team],
   );
 
   const pinned = useMemo(() => new Set(pinnedIds), [pinnedIds]);
   const hasActiveFilters = Boolean(
     query || team !== "all" || availability !== "all" || sortBy !== "name",
   );
+
+  const closeDialog = useCallback(() => {
+    setDialog({ open: false, person: null });
+  }, []);
+
+  function openCreatePerson() {
+    setDialog({ open: true, person: null });
+  }
+
+  function openEditPerson(person) {
+    setDialog({ open: true, person });
+  }
+
+  function savePerson(person) {
+    if (person.id && person.managed) {
+      setManagedPeople((current) =>
+        current.map((entry) =>
+          entry.id === person.id ? { ...person, managed: true } : entry,
+        ),
+      );
+      setNotice(`${person.name} updated`);
+    } else {
+      const created = {
+        ...person,
+        id: createManagedId(person.name),
+        managed: true,
+      };
+      setManagedPeople((current) => [...current, created]);
+      setNotice(`${created.name} added to the directory`);
+    }
+
+    closeDialog();
+  }
+
+  function deletePerson(id) {
+    const person = managedPeople.find((entry) => entry.id === id);
+    setManagedPeople((current) => current.filter((entry) => entry.id !== id));
+    setPinnedIds((current) => current.filter((entryId) => entryId !== id));
+    closeDialog();
+    setNotice(person ? `${person.name} removed` : "Profile removed");
+  }
 
   function togglePinned(id) {
     setPinnedIds((current) =>
@@ -63,7 +135,7 @@ export default function App() {
       <a className="skip-link" href="#main">
         Skip to people
       </a>
-      <Header />
+      <Header onAddPerson={openCreatePerson} />
 
       <main id="main">
         <section className="hero" aria-labelledby="hero-title">
@@ -94,7 +166,7 @@ export default function App() {
           <article>
             <span>People</span>
             <strong>{stats.total}</strong>
-            <small>Fictional profiles</small>
+            <small>Directory profiles</small>
           </article>
           <article>
             <span>Available now</span>
@@ -104,7 +176,7 @@ export default function App() {
           <article>
             <span>Avg. capacity</span>
             <strong>{stats.averageCapacity}%</strong>
-            <small>Across the demo directory</small>
+            <small>Across the directory</small>
           </article>
           <article>
             <span>Shortlist</span>
@@ -132,9 +204,15 @@ export default function App() {
             <p className="eyebrow">Directory</p>
             <h2>People</h2>
           </div>
-          <p className="result-count" role="status" aria-live="polite">
-            {visiblePeople.length} {visiblePeople.length === 1 ? "match" : "matches"}
-          </p>
+          <div className="results-actions">
+            <p className="result-count" role="status" aria-live="polite">
+              {visiblePeople.length} {visiblePeople.length === 1 ? "match" : "matches"}
+            </p>
+            <button className="inline-add-button" type="button" onClick={openCreatePerson}>
+              <span aria-hidden="true">+</span>
+              Add person
+            </button>
+          </div>
         </div>
 
         {visiblePeople.length > 0 ? (
@@ -145,6 +223,7 @@ export default function App() {
                 person={person}
                 pinned={pinned.has(person.id)}
                 onTogglePinned={togglePinned}
+                onEdit={person.managed ? openEditPerson : undefined}
               />
             ))}
           </section>
@@ -160,7 +239,9 @@ export default function App() {
         )}
 
         <footer className="page-footer">
-          <p>Fictional demo directory · all names and staffing data are fictional.</p>
+          <p>
+            Demo workspace · profiles you add or edit are stored only in this browser.
+          </p>
           <a
             href="https://github.com/MykolaDotsenko/people-lens"
             target="_blank"
@@ -170,6 +251,18 @@ export default function App() {
           </a>
         </footer>
       </main>
+
+      <PersonDialog
+        open={dialog.open}
+        person={dialog.person}
+        onClose={closeDialog}
+        onSave={savePerson}
+        onDelete={deletePerson}
+      />
+
+      <div className={notice ? "app-toast app-toast-visible" : "app-toast"} role="status" aria-live="polite">
+        {notice}
+      </div>
     </>
   );
 }
