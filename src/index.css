@@ -2,26 +2,27 @@
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
-  color: #1d261f;
-  background: #f4f2ec;
+  color: #f4f7fb;
+  background: #070b12;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
-  color-scheme: light;
+  color-scheme: dark;
 
-  --paper: #f4f2ec;
-  --surface: #fffefa;
-  --surface-muted: #edf1ec;
-  --ink: #1d261f;
-  --muted: #667068;
-  --line: #d7d2c8;
-  --line-strong: #aaa397;
-  --forest: #245c45;
-  --forest-soft: #dfe9e2;
-  --coral: #a94834;
-  --blue: #3f67a3;
-  --gold: #806011;
-  --plum: #665276;
-  --focus: #0d6a4e;
+  --bg: #070b12;
+  --bg-deep: #05070c;
+  --surface: rgba(13, 19, 31, 0.78);
+  --surface-strong: #0f1725;
+  --surface-soft: rgba(19, 29, 46, 0.7);
+  --ink: #f4f7fb;
+  --muted: #9ba8b8;
+  --line: rgba(151, 168, 193, 0.18);
+  --line-strong: rgba(151, 168, 193, 0.34);
+  --neon: #6fffc2;
+  --cyan: #63d8ff;
+  --violet: #9d8cff;
+  --coral: #ff6d8a;
+  --gold: #ffc857;
+  --focus: #6fffc2;
 }
 
 * {
@@ -30,15 +31,53 @@
 
 html {
   scroll-behavior: smooth;
+  background: var(--bg);
 }
 
 body {
+  position: relative;
+  isolation: isolate;
   min-width: 320px;
   min-height: 100vh;
   margin: 0;
+  overflow-x: hidden;
   background:
-    linear-gradient(180deg, #f7f5f0 0, var(--paper) 26rem),
-    var(--paper);
+    radial-gradient(circle at 15% 10%, rgba(99, 216, 255, 0.13), transparent 28rem),
+    radial-gradient(circle at 82% 18%, rgba(157, 140, 255, 0.12), transparent 30rem),
+    radial-gradient(circle at 62% 80%, rgba(111, 255, 194, 0.09), transparent 32rem),
+    linear-gradient(180deg, #080d16 0%, #070b12 45%, #05070c 100%);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: -20%;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    conic-gradient(
+      from 120deg at 50% 50%,
+      transparent 0deg,
+      rgba(99, 216, 255, 0.06) 70deg,
+      transparent 135deg,
+      rgba(255, 109, 138, 0.045) 220deg,
+      transparent 300deg
+    );
+  filter: blur(60px);
+  animation: aurora-drift 20s ease-in-out infinite alternate;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,0.65), transparent 80%);
 }
 
 button,
@@ -70,13 +109,22 @@ svg {
 }
 
 ::selection {
-  background: #ccddd1;
+  background: rgba(111, 255, 194, 0.24);
   color: var(--ink);
 }
 
 :focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 3px;
+}
+
+@keyframes aurora-drift {
+  from {
+    transform: translate3d(-3%, -2%, 0) rotate(-2deg) scale(1);
+  }
+  to {
+    transform: translate3d(3%, 2%, 0) rotate(3deg) scale(1.08);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
