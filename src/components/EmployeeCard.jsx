@@ -1,7 +1,41 @@
+import { useEffect, useRef, useState } from "react";
+
 import { availabilityLabel, getInitials } from "../domain/people.js";
 
-export default function EmployeeCard({ person, pinned, onTogglePinned, onEdit }) {
+export default function EmployeeCard({
+  person,
+  pinned,
+  onTogglePinned,
+  onEdit,
+  onRequestRemove,
+}) {
   const status = availabilityLabel(person.availability);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+
+    function handlePointerDown(event) {
+      if (!menuRef.current?.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    }
+
+    function handleKeyDown(event) {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [menuOpen]);
 
   function handlePointerMove(event) {
     if (event.pointerType !== "mouse") return;
@@ -11,8 +45,8 @@ export default function EmployeeCard({ person, pinned, onTogglePinned, onEdit })
     const x = (event.clientX - rect.left) / rect.width;
     const y = (event.clientY - rect.top) / rect.height;
 
-    card.style.setProperty("--tilt-y", `${(x - 0.5) * 10}deg`);
-    card.style.setProperty("--tilt-x", `${(0.5 - y) * 8}deg`);
+    card.style.setProperty("--tilt-y", `${(x - 0.5) * 8}deg`);
+    card.style.setProperty("--tilt-x", `${(0.5 - y) * 6}deg`);
     card.style.setProperty("--glow-x", `${x * 100}%`);
     card.style.setProperty("--glow-y", `${y * 100}%`);
   }
@@ -42,18 +76,6 @@ export default function EmployeeCard({ person, pinned, onTogglePinned, onEdit })
         </div>
 
         <div className="person-card-actions">
-          {onEdit && (
-            <button
-              className="manage-button"
-              type="button"
-              aria-label={"Edit " + person.name}
-              onClick={() => onEdit(person)}
-            >
-              <span aria-hidden="true">✎</span>
-              <span>Edit</span>
-            </button>
-          )}
-
           <button
             className="pin-button"
             type="button"
@@ -64,6 +86,47 @@ export default function EmployeeCard({ person, pinned, onTogglePinned, onEdit })
             <span aria-hidden="true">{pinned ? "★" : "☆"}</span>
             <span>{pinned ? "Shortlisted" : "Shortlist"}</span>
           </button>
+
+          <div className="profile-menu" ref={menuRef}>
+            <button
+              className="profile-menu-trigger"
+              type="button"
+              aria-haspopup="menu"
+              aria-expanded={menuOpen}
+              aria-label={"Actions for " + person.name}
+              onClick={() => setMenuOpen((open) => !open)}
+            >
+              <span aria-hidden="true">⋯</span>
+            </button>
+
+            {menuOpen && (
+              <div className="profile-menu-popover" role="menu">
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    onEdit(person);
+                  }}
+                >
+                  <span aria-hidden="true">✎</span>
+                  Edit profile
+                </button>
+                <button
+                  className="profile-menu-danger"
+                  type="button"
+                  role="menuitem"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    onRequestRemove(person);
+                  }}
+                >
+                  <span aria-hidden="true">−</span>
+                  Remove from directory
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
