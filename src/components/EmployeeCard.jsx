@@ -25,6 +25,26 @@ export default function EmployeeCard({
     function handleKeyDown(event) {
       if (event.key === "Escape") {
         setMenuOpen(false);
+        menuRef.current?.querySelector(".profile-menu-trigger")?.focus();
+        return;
+      }
+
+      if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+
+      const items = [...(menuRef.current?.querySelectorAll('[role="menuitem"]') ?? [])];
+      if (items.length === 0) return;
+
+      event.preventDefault();
+      const currentIndex = items.indexOf(document.activeElement);
+
+      if (event.key === "Home") {
+        items[0].focus();
+      } else if (event.key === "End") {
+        items.at(-1).focus();
+      } else if (event.key === "ArrowDown") {
+        items[(currentIndex + 1 + items.length) % items.length].focus();
+      } else if (event.key === "ArrowUp") {
+        items[(currentIndex - 1 + items.length) % items.length].focus();
       }
     }
 
@@ -94,7 +114,18 @@ export default function EmployeeCard({
               aria-haspopup="menu"
               aria-expanded={menuOpen}
               aria-label={"Actions for " + person.name}
-              onClick={() => setMenuOpen((open) => !open)}
+              onClick={() => {
+                setMenuOpen((open) => {
+                  const next = !open;
+                  if (next) {
+                    window.setTimeout(
+                      () => menuRef.current?.querySelector('[role="menuitem"]')?.focus(),
+                      0,
+                    );
+                  }
+                  return next;
+                });
+              }}
             >
               <span aria-hidden="true">⋯</span>
             </button>
