@@ -90,6 +90,8 @@ The UI uses native search/select/meter controls where they fit, plus:
 ```bash
 npm ci
 npm run check
+npx playwright install chromium
+npm run test:e2e
 ```
 
 The repository tests the parts most likely to regress:
