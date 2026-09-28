@@ -1,0 +1,52 @@
+name: Temporary mobile review
+
+on:
+  push:
+    branches:
+      - design/people-lens-human-signal-board
+
+permissions:
+  contents: write
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Start preview
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 4173 > /tmp/pl.log 2>&1 &
+          for i in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:4173/people-lens/ > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/pl.log
+          exit 1
+      - name: Capture mobile review
+        run: |
+          mkdir -p docs/review
+          node --input-type=module <<'EOF'
+          import { chromium } from "@playwright/test";
+          const browser = await chromium.launch({ headless: true });
+          const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
+          await page.goto("http://127.0.0.1:4173/people-lens/", { waitUntil: "networkidle" });
+          await page.screenshot({ path: "docs/review/mobile.png", fullPage: false });
+          await browser.close();
+          EOF
+          base64 -w 0 docs/review/mobile.png > docs/review/mobile.b64
+      - name: Commit mobile review
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/review/mobile.png docs/review/mobile.b64
+          git commit -m "chore: capture temporary mobile design review"
+          git push origin HEAD:${{ github.ref_name }}
