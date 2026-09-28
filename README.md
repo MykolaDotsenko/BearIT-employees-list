@@ -16,13 +16,15 @@ Built with React around explicit state ownership, pure discovery logic, resilien
 - team and availability filters
 - deterministic sorting by name, capacity, team, or shortlist state
 - browser-persisted shortlist
+- add, edit, and delete locally managed people profiles
+- locally managed profiles persist across reloads and immediately participate in stats, search, filters, and sorting
 - live result count and clear empty-state recovery
 - high-signal overview metrics
 - responsive card layout for desktop and mobile
 - reduced-motion and forced-colors support
 - zero network dependency at runtime
 
-All profiles, roles, capacity figures, and staffing statuses are **fictional demo data** and do not represent any real employer or personnel records.
+The bundled seed profiles are **fictional demo data** and do not represent any real employer or personnel records. Profiles created through the UI stay local to the current browser.
 
 ## Stack
 
@@ -42,14 +44,15 @@ The application deliberately avoids a state library, router, component framework
 ~~~text
 React UI
   ├─> pure people selectors
-  └─> local-storage adapter
+  ├─> shortlist storage adapter
+  └─> managed-people storage adapter
 
-seed data ─> selectors ─> derived view ─> accessible components
+seed data + locally managed profiles ─> selectors ─> derived view ─> accessible components
 ~~~
 
 The domain module is browser-agnostic. Search, filtering, sorting, stats, labels, and initials are pure functions and can be tested without React or the DOM.
 
-Persistence is isolated behind a defensive adapter. Only shortlist ids are durable; temporary discovery state remains ephemeral.
+Persistence is isolated behind defensive adapters. The shortlist and locally managed profiles are durable; temporary discovery state such as search and filters remains ephemeral.
 
 See [ARCHITECTURE.md](./ARCHITECTURE.md) for the technical rationale and [DESIGN.md](./DESIGN.md) for the PeopleLens visual language and anti-sameness principles.
 
@@ -97,13 +100,13 @@ The UI includes:
 
 ## Product decisions
 
-### Why fictional local data?
+### Why a local workspace instead of a backend?
 
-The purpose is to demonstrate product interaction and frontend architecture, not to simulate an HR backend. A remote API would add deployment and failure surface without improving the core portfolio signal.
+The bundled dataset remains fictional, while the UI now supports a realistic people-management workflow: users can create, edit, delete, shortlist, search, and filter profiles. Locally managed profiles persist in the browser, which keeps the demo self-contained without pretending there is an HR backend or shared multi-user database.
 
-### Why persist only the shortlist?
+### Why keep discovery state ephemeral?
 
-A shortlist represents deliberate user intent. Search terms and filters are temporary navigation state, so restoring them on every visit would make the product less predictable.
+Profiles and shortlist choices represent durable user intent. Search terms and filters are temporary navigation state, so restoring them on every visit would make discovery less predictable.
 
 ### Why no global state library?
 
@@ -122,10 +125,12 @@ For a focused implementation review:
 
 1. [src/App.jsx](./src/App.jsx) — state ownership and composition
 2. [src/domain/people.js](./src/domain/people.js) — pure discovery rules
-3. [src/storage/pinnedStorage.js](./src/storage/pinnedStorage.js) — resilient persistence boundary
-4. [src/components/EmployeeCard.jsx](./src/components/EmployeeCard.jsx) — accessible product UI
-5. [tests/people.test.js](./tests/people.test.js) — regression coverage
-6. [.github/workflows/quality.yml](./.github/workflows/quality.yml) — automated verification
+3. [src/storage/pinnedStorage.js](./src/storage/pinnedStorage.js) — resilient shortlist persistence
+4. [src/storage/peopleStorage.js](./src/storage/peopleStorage.js) — validation and persistence for locally managed profiles
+5. [src/components/PersonDialog.jsx](./src/components/PersonDialog.jsx) — accessible create/edit/delete workflow
+6. [src/components/EmployeeCard.jsx](./src/components/EmployeeCard.jsx) — directory card and management actions
+7. [tests/](./tests/) and [e2e/](./e2e/) — domain, storage, browser, and accessibility regression coverage
+8. [.github/workflows/quality.yml](./.github/workflows/quality.yml) — automated verification
 
 ## Repository evolution
 
