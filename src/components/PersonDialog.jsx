@@ -142,7 +142,7 @@ export default function PersonDialog({ person, onClose, onSave }) {
             <h2 id={titleId}>{isEditing ? "Edit person" : "Add person"}</h2>
             <p id={descriptionId}>
               {isEditing
-                ? "Update this locally managed profile."
+                ? "Update this profile in your local workspace."
                 : "Create a profile that immediately joins the directory, filters and capacity signals."}
             </p>
           </div>
