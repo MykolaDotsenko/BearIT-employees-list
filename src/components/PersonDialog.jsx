@@ -30,6 +30,7 @@ function toFormValue(person) {
 export default function PersonDialog({ open, person, onClose, onSave, onDelete }) {
   const titleId = useId();
   const descriptionId = useId();
+  const dialogRef = useRef(null);
   const firstInputRef = useRef(null);
   const [form, setForm] = useState(() => toFormValue(person));
   const [errors, setErrors] = useState({});
@@ -48,7 +49,29 @@ export default function PersonDialog({ open, person, onClose, onSave, onDelete }
     const timer = window.setTimeout(() => firstInputRef.current?.focus(), 0);
 
     function handleKeyDown(event) {
-      if (event.key === "Escape") onClose();
+      if (event.key === "Escape") {
+        onClose();
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const focusable = dialogRef.current?.querySelectorAll(
+        'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [href], [tabindex]:not([tabindex="-1"])',
+      );
+
+      if (!focusable?.length) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     }
 
     window.addEventListener("keydown", handleKeyDown);
@@ -113,6 +136,7 @@ export default function PersonDialog({ open, person, onClose, onSave, onDelete }
       if (event.target === event.currentTarget) onClose();
     }}>
       <section
+        ref={dialogRef}
         className="person-dialog"
         role="dialog"
         aria-modal="true"
