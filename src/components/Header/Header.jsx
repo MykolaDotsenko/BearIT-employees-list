@@ -26,7 +26,7 @@ export default function Header({ onAddPerson }) {
         </div>
 
         <div className="header-actions">
-          <span className="demo-badge">Fictional dataset</span>
+          <span className="demo-badge">Local workspace</span>
           <button className="header-add-button" type="button" onClick={onAddPerson}>
             <span aria-hidden="true">+</span>
             Add person
