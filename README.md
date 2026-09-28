@@ -88,7 +88,7 @@ A number such as `72%` is useful only if its meaning stays modest.
 
 In PeopleLens it represents a **near-term capacity signal** supplied by the directory data. It is not a prediction, utilization score, performance metric or automated staffing recommendation.
 
-The app deliberately keeps these concepts separate:
+The app keeps these concepts separate:
 
 ```text
 skill match ≠ availability ≠ capacity ≠ final staffing decision
@@ -252,4 +252,4 @@ npm run dev
 - [`src/components/EmployeeCard.jsx`](./src/components/EmployeeCard.jsx) — profile, capacity and actions
 - [`e2e/`](./e2e/) — browser and accessibility coverage
 
-PeopleLens stays intentionally small: it helps a team find and compare internal expertise without pretending to replace the systems where staffing decisions are actually approved and managed.
+PeopleLens stays small: it helps a team find and compare internal expertise without pretending to replace the systems where staffing decisions are actually approved and managed.
