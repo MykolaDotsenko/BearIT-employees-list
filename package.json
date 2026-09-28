@@ -2,7 +2,7 @@
   "name": "people-lens",
   "version": "1.0.0",
   "private": true,
-  "description": "A production-minded PeopleOps directory case study built with React and a small pure domain core.",
+  "description": "A focused React PeopleOps directory for searchable profiles, capacity signals, and a locally persisted shortlist.",
   "type": "module",
   "engines": {
     "node": ">=22.22.0"
