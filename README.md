@@ -24,9 +24,8 @@ All employee names, roles, capacity figures, and staffing statuses are **fiction
 
 ## Stack
 
-- React 18
-- Vite 5
-- styled-components 6 for the small branded shell
+- React 19.3
+- Vite 8.1
 - modern CSS for the product surface
 - Web Storage API
 - Node.js built-in test runner
@@ -67,7 +66,7 @@ That verifies:
 2. pure selector and persistence-boundary tests
 3. production Vite build
 
-GitHub Actions runs the same gate on pushes and pull requests.
+GitHub Actions runs this gate on pull requests and before deploying the main branch to GitHub Pages. The pull-request gate also runs the Playwright browser and accessibility suite.
 
 Unit coverage targets the behavior with the highest regression risk:
 
