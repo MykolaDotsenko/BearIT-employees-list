@@ -1,7 +1,18 @@
+
+@supports (color: oklch(50% 0.1 120)) {
+  :root {
+    --forest: oklch(43% 0.09 153);
+    --coral: oklch(55% 0.14 38);
+    --blue: oklch(50% 0.09 253);
+    --gold: oklch(52% 0.1 84);
+    --plum: oklch(46% 0.08 315);
+  }
+}
+
 main {
-  width: min(1180px, calc(100% - 2rem));
+  width: min(1180px, calc(100% - clamp(1rem, 4vw, 3rem)));
   margin: 0 auto;
-  padding: 2.8rem 0 2.5rem;
+  padding: clamp(2rem, 5vw, 3.4rem) 0 2.5rem;
 }
 
 .skip-link {
@@ -95,6 +106,7 @@ main {
   max-width: 780px;
   font-size: clamp(2.8rem, 5vw, 4.6rem);
   line-height: 0.93;
+  text-wrap: balance;
 }
 
 .hero-copy {
@@ -103,6 +115,7 @@ main {
   color: #4f5a52;
   font-size: clamp(1rem, 2vw, 1.12rem);
   line-height: 1.58;
+  text-wrap: pretty;
 }
 
 .hero-signal {
@@ -181,15 +194,21 @@ main {
 .stats-grid strong {
   color: var(--ink);
   font-size: 1.62rem;
+  font-variant-numeric: tabular-nums;
   letter-spacing: -0.05em;
 }
 
 .filter-panel {
+  position: sticky;
+  top: 82px;
+  z-index: 5;
   border: 1px solid var(--line-strong);
   border-left: 5px solid var(--forest);
   border-radius: 0.55rem;
-  background: var(--surface-muted);
+  background: color-mix(in srgb, var(--surface-muted) 94%, transparent);
   padding: 1.15rem 1.2rem;
+  box-shadow: 0 12px 30px rgba(29, 38, 31, 0.05);
+  backdrop-filter: blur(10px);
 }
 
 .filter-heading-row,
@@ -295,6 +314,7 @@ main {
 
 .person-card {
   --team-accent: var(--forest);
+  container: person-card / inline-size;
   border: 1px solid var(--line-strong);
   border-top: 4px solid var(--team-accent);
   border-radius: 0.5rem;
@@ -326,9 +346,16 @@ main {
   --team-accent: var(--plum);
 }
 
-.person-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 4px 5px 0 rgba(29, 38, 31, 0.12);
+.person-card:has(.pin-button[aria-pressed="true"]) {
+  border-color: var(--ink);
+  background: color-mix(in srgb, var(--surface) 88%, var(--team-accent) 12%);
+}
+
+@media (hover: hover) {
+  .person-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 4px 5px 0 rgba(29, 38, 31, 0.12);
+  }
 }
 
 .avatar {
@@ -450,6 +477,7 @@ main {
 
 .capacity-row strong {
   color: var(--ink);
+  font-variant-numeric: tabular-nums;
 }
 
 .capacity-row meter {
@@ -539,6 +567,17 @@ main {
   text-underline-offset: 0.2em;
 }
 
+
+@container person-card (width > 350px) {
+  .person-heading h3 {
+    font-size: 1.25rem;
+  }
+
+  .skill-list {
+    gap-inline: 0.95rem;
+  }
+}
+
 @media (max-width: 920px) {
   .hero {
     grid-template-columns: 1fr;
@@ -572,6 +611,11 @@ main {
 }
 
 @media (max-width: 620px) {
+  .filter-panel {
+    position: static;
+    backdrop-filter: none;
+  }
+
   main {
     width: min(100% - 1rem, 1180px);
     padding-top: 1.8rem;
