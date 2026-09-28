@@ -2,12 +2,39 @@ import { availabilityLabel, getInitials } from "../domain/people.js";
 
 export default function EmployeeCard({ person, pinned, onTogglePinned }) {
   const status = availabilityLabel(person.availability);
+
+  function handlePointerMove(event) {
+    if (event.pointerType !== "mouse") return;
+
+    const card = event.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width;
+    const y = (event.clientY - rect.top) / rect.height;
+
+    card.style.setProperty("--tilt-y", `${(x - 0.5) * 10}deg`);
+    card.style.setProperty("--tilt-x", `${(0.5 - y) * 8}deg`);
+    card.style.setProperty("--glow-x", `${x * 100}%`);
+    card.style.setProperty("--glow-y", `${y * 100}%`);
+  }
+
+  function handlePointerLeave(event) {
+    const card = event.currentTarget;
+    card.style.setProperty("--tilt-x", "0deg");
+    card.style.setProperty("--tilt-y", "0deg");
+    card.style.setProperty("--glow-x", "50%");
+    card.style.setProperty("--glow-y", "15%");
+  }
   const shortlistLabel = pinned
     ? "Remove " + person.name + " from shortlist"
     : "Add " + person.name + " to shortlist";
 
   return (
-    <article className="person-card" data-team={person.team.toLowerCase()}>
+    <article
+      className="person-card"
+      data-team={person.team.toLowerCase()}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={handlePointerLeave}
+    >
       <div className="person-card-top">
         <div className="avatar" aria-hidden="true">
           {getInitials(person.name)}

@@ -1,38 +1,44 @@
 # PeopleLens visual direction
 
-PeopleLens should feel like a **modern human-operations product**, not a generic AI-generated SaaS dashboard.
+PeopleLens uses a **neon 3D signal-board** visual language: modern, immersive, and deliberately product-specific rather than generic AI/SaaS chrome.
 
 ## Design signature
 
-- warm neutral canvas with high-contrast ink instead of default blue/purple dark mode
-- a restrained forest/coral palette with team colors used semantically
-- one recognizable lens mark, reused sparingly instead of decorative icon noise
-- fluid type and responsive component layouts rather than fixed desktop compositions
-- restrained elevation: only interactive or priority surfaces rise from the page
-- mixed geometry: moderate radii for product surfaces, compact controls, no universal pill treatment
-- hierarchy created primarily through scale, spacing, alignment, contrast, and grouping
+- deep midnight canvas with restrained electric mint, cyan, violet, coral and gold signals
+- the PeopleLens mark behaves like an illuminated optical lens, not a generic app icon
+- glass surfaces are limited to priority interaction zones instead of coating every component
+- people cards use semantic team neon accents and true perspective depth
+- pointer-aware cards react to cursor position with subtle 3D tilt and moving light
+- hierarchy comes from scale, depth, light, spacing, and information density rather than decorative clutter
 
-## Modern interaction principles
+## Motion system
 
-- first viewport shows both product purpose and real working controls
-- hover effects apply only on devices that actually support hover
-- keyboard focus is explicit and high contrast
-- form focus uses a visible but quiet focus ring
-- motion is subtle and fully reduced when the user requests reduced motion
-- status always has text in addition to color
-- numerical signals use tabular figures for faster comparison
-- cards reflow with content-driven responsive grid behavior
+- hero copy enters with depth and blur resolving into focus
+- the signal module floats slowly in 3D space
+- metric blocks and people cards reveal with short staggered transitions
+- the background aurora and orbital lens elements move independently at low amplitude
+- hover motion runs only on devices with hover capability
+- all decorative animation and 3D transforms collapse when prefers-reduced-motion is enabled
+
+## Interaction principles
+
+- animation reinforces hierarchy and spatial relationships rather than delaying tasks
+- neon is used as signal, status, focus and identity—not as text decoration everywhere
+- keyboard focus remains explicit and high contrast
+- status never relies on color alone
+- form controls retain familiar shapes and readable labels
+- mobile intentionally disables pointer tilt and reduces visual motion
 
 ## Avoid
 
-- blue/purple AI gradients
-- glassmorphism as the dominant visual language
-- neon glows and decorative sparkles
-- identical floating cards for every metric
-- pill-shaped decoration for every label
-- oversized hero copy that pushes the actual product below the fold
-- generic “modern dashboard” styling with no PeopleOps meaning
+- full-screen particle effects
+- constant high-speed motion
+- unreadable glow-heavy text
+- blue-purple gradient treatment on every component
+- universal glassmorphism
+- decorative 3D that changes layout or blocks interaction
+- animation without a reduced-motion fallback
 
 ## Product character
 
-PeopleLens should feel calm, current, direct, and operational. The interface is information-rich, but visual hierarchy keeps it easy to scan. Novelty comes from a coherent product identity, not from decorative effects.
+PeopleLens should feel like a compact operations instrument: focused, futuristic and responsive. The interface can be visually expressive while remaining immediately scannable and credible as a real PeopleOps tool.

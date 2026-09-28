@@ -67,9 +67,12 @@ export default function App() {
 
       <main id="main">
         <section className="hero" aria-labelledby="hero-title">
-          <div>
+          <div className="hero-orbit" aria-hidden="true" />
+          <div className="hero-copy-block">
             <p className="eyebrow">People intelligence, without the noise</p>
-            <h1 id="hero-title">See capacity, skills, and availability in one focused view.</h1>
+            <h1 id="hero-title">
+              See <span>capacity, skills, and availability</span> in one focused view.
+            </h1>
             <p className="hero-copy">
               PeopleLens is a compact PeopleOps directory built around one job:
               finding the right teammate quickly without turning a small product
