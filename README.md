@@ -8,7 +8,7 @@ Built with React around explicit state ownership, pure discovery logic, resilien
 
 [**Open the live demo →**](https://mykoladotsenko.github.io/people-lens/)
 
-Use the illuminated **+** control to add a locally managed profile; created profiles persist in this browser and participate in directory stats, search, filters, sorting, and shortlist.
+Use the single **Add person** action in the header to grow the local workspace. Every profile exposes a compact action menu for editing or removing it.
 
 ![PeopleLens directory showing search, team filters, availability, capacity signals, and a saved shortlist](./docs/screenshots/people-lens-home.png)
 
@@ -18,15 +18,16 @@ Use the illuminated **+** control to add a locally managed profile; created prof
 - team and availability filters
 - deterministic sorting by name, capacity, team, or shortlist state
 - browser-persisted shortlist
-- add, edit, and delete locally managed people profiles
-- locally managed profiles persist across reloads and immediately participate in stats, search, filters, and sorting
+- add new people through one clear primary CTA
+- edit or remove any profile through a compact per-person action menu
+- local edits, additions, removals, and shortlist state persist across reloads and immediately participate in stats, search, filters, and sorting
 - live result count and clear empty-state recovery
 - high-signal overview metrics
 - responsive card layout for desktop and mobile
 - reduced-motion and forced-colors support
 - zero network dependency at runtime
 
-The bundled seed profiles are **fictional demo data** and do not represent any real employer or personnel records. Profiles created through the UI stay local to the current browser.
+The bundled seed profiles are **fictional demo data** and do not represent any real employer or personnel records. All workspace changes stay local to the current browser.
 
 ## Stack
 
@@ -49,12 +50,12 @@ React UI
   ├─> shortlist storage adapter
   └─> managed-people storage adapter
 
-seed data + locally managed profiles ─> selectors ─> derived view ─> accessible components
+seed data + local overrides/additions/removals ─> selectors ─> derived view ─> accessible components
 ~~~
 
 The domain module is browser-agnostic. Search, filtering, sorting, stats, labels, and initials are pure functions and can be tested without React or the DOM.
 
-Persistence is isolated behind defensive adapters. The shortlist and locally managed profiles are durable; temporary discovery state such as search and filters remains ephemeral.
+Persistence is isolated behind defensive adapters. Shortlist state, local profile overrides, additions, and removals are durable; temporary discovery state such as search and filters remains ephemeral.
 
 See [ARCHITECTURE.md](./ARCHITECTURE.md) for the technical rationale and [DESIGN.md](./DESIGN.md) for the PeopleLens visual language and anti-sameness principles.
 
@@ -104,7 +105,7 @@ The UI includes:
 
 ### Why a local workspace instead of a backend?
 
-The bundled dataset remains fictional, while the UI now supports a realistic people-management workflow: users can create, edit, delete, shortlist, search, and filter profiles. Locally managed profiles persist in the browser, which keeps the demo self-contained without pretending there is an HR backend or shared multi-user database.
+The bundled dataset remains fictional, while the UI supports a realistic people-management workflow: users can add, edit, remove, shortlist, search, filter, and sort profiles. Workspace changes persist in the browser, which keeps the demo self-contained without pretending there is an HR backend or shared multi-user database.
 
 ### Why keep discovery state ephemeral?
 
@@ -128,11 +129,12 @@ For a focused implementation review:
 1. [src/App.jsx](./src/App.jsx) — state ownership and composition
 2. [src/domain/people.js](./src/domain/people.js) — pure discovery rules
 3. [src/storage/pinnedStorage.js](./src/storage/pinnedStorage.js) — resilient shortlist persistence
-4. [src/storage/peopleStorage.js](./src/storage/peopleStorage.js) — validation and persistence for locally managed profiles
-5. [src/components/PersonDialog.jsx](./src/components/PersonDialog.jsx) — accessible create/edit/delete workflow
-6. [src/components/EmployeeCard.jsx](./src/components/EmployeeCard.jsx) — directory card and management actions
-7. [tests/](./tests/) and [e2e/](./e2e/) — domain, storage, browser, and accessibility regression coverage
-8. [.github/workflows/quality.yml](./.github/workflows/quality.yml) — automated verification
+4. [src/storage/peopleStorage.js](./src/storage/peopleStorage.js) — validation, profile overrides, additions, and persistent removals
+5. [src/components/PersonDialog.jsx](./src/components/PersonDialog.jsx) — accessible add/edit workflow
+6. [src/components/RemovePersonDialog.jsx](./src/components/RemovePersonDialog.jsx) — explicit destructive confirmation
+7. [src/components/EmployeeCard.jsx](./src/components/EmployeeCard.jsx) — directory card, shortlist, and profile action menu
+8. [tests/](./tests/) and [e2e/](./e2e/) — domain, storage, browser, and accessibility regression coverage
+9. [.github/workflows/quality.yml](./.github/workflows/quality.yml) — automated verification
 
 ## Repository evolution
 
