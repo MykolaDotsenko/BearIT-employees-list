@@ -1,62 +1,201 @@
-# PeopleLens — PeopleOps Directory
+# PeopleLens — Internal Staffing Directory
+
+**Find the teammate who can actually take the work.**
+
+[**Open the live demo →**](https://mykoladotsenko.github.io/people-lens/) ·
+[Architecture](./ARCHITECTURE.md) ·
+[Design notes](./DESIGN.md)
 
 [![Quality](https://github.com/MykolaDotsenko/people-lens/actions/workflows/quality.yml/badge.svg)](https://github.com/MykolaDotsenko/people-lens/actions/workflows/quality.yml)
 
-**Find teammates by role, skills, team, location, availability and near-term capacity.**
+![PeopleLens directory showing search, filters, capacity signals and a shortlist](./docs/screenshots/people-lens-home.png)
 
-[**Open the live demo →**](https://mykoladotsenko.github.io/people-lens/)
+A staffing question often starts in a much messier way than it should:
 
-![PeopleLens directory showing search, team filters, availability, capacity signals, and a saved shortlist](./docs/screenshots/people-lens-home.png)
+> “We need someone with React and accessibility experience for the next sprint. Who is available, and who actually has room to take it?”
 
-The bundled profiles are fictional demo data. Additions, edits, removals and shortlist choices stay in the current browser; there is no HR backend or shared personnel database behind the demo.
+Without a focused view, the answer may be scattered across Slack, spreadsheets, team knowledge and calendar context.
 
-## What you can do
+PeopleLens turns that question into one short workflow:
+
+```text
+work to staff
+   ↓
+search expertise
+   ↓
+check availability
+   ↓
+compare near-term capacity
+   ↓
+shortlist candidates
+   ↓
+make the staffing decision
+```
+
+The bundled profiles are fictional demo data. Profile changes and shortlist choices stay in the current browser; there is no shared HR database behind the demo.
+
+## A realistic staffing example
+
+Suppose a product team needs help improving accessibility in a React interface.
+
+Search for:
+
+```text
+accessibility
+```
+
+The current demo returns **Ava Lind**:
+
+- Senior Frontend Engineer
+- Engineering
+- Turku
+- Hybrid
+- Available
+- 72% near-term capacity
+- React · TypeScript · Accessibility
+
+That does not make the staffing decision automatically.
+
+It does make the decision easier to discuss because the relevant context is visible in one place:
+
+> “Ava has the skill match, is currently available, and appears to have meaningful near-term capacity. Add her to the shortlist and compare against the other options.”
+
+That is the job PeopleLens is built around.
+
+## Discovery before administration
+
+PeopleLens is not trying to be a full HR platform.
+
+The main screen is optimized for one practical question:
+
+> **Who could help with this work?**
+
+You can:
 
 - search across names, roles, skills, teams, locations and work modes;
 - filter by team and availability;
 - sort by name, capacity, team or shortlist status;
-- save a shortlist;
-- add, edit or remove people;
-- keep local workspace changes across reloads;
-- see live result counts and summary metrics;
-- use the same workflows on desktop and mobile.
+- compare near-term capacity;
+- save a shortlist for the current staffing discussion;
+- add, edit or remove local profiles;
+- keep local workspace changes across reloads.
 
-The header has one primary **Add person** action. Existing profiles keep edit/remove actions in a compact per-person menu.
+The interface keeps one persistent **Add person** action. Editing and removal stay behind each profile's action menu so discovery remains the primary workflow.
 
-## Data flow
+## Capacity is context, not a promise
 
-PeopleLens keeps one effective directory built from:
+A number such as `72%` is useful only if its meaning stays modest.
+
+In PeopleLens it represents a **near-term capacity signal** supplied by the directory data. It is not a prediction, utilization score, performance metric or automated staffing recommendation.
+
+The app deliberately keeps these concepts separate:
+
+```text
+skill match ≠ availability ≠ capacity ≠ final staffing decision
+```
+
+PeopleLens surfaces those signals together. A person still makes the decision.
+
+## Shortlist keeps the conversation focused
+
+Finding one plausible person is rarely the whole job.
+
+A lead may want to compare:
+
+- a stronger skill match with less capacity;
+- someone available now but in another location;
+- a teammate with related skills who can start sooner;
+- two or three reasonable options before discussing the work with them.
+
+Shortlisting keeps those candidates visible without turning the directory into a ranking engine.
+
+Pinned profiles can also be sorted to the top, and the shortlist survives reloads in the same browser.
+
+## Local profile changes behave like a small workspace
+
+The demo ships with fictional seed profiles, but the directory itself is editable.
+
+A local profile can be:
+
+- added;
+- edited;
+- removed;
+- searched immediately;
+- included in filters and derived metrics;
+- shortlisted;
+- restored after reload.
+
+The effective directory is composed from the bundled data plus local workspace changes:
 
 ```text
 fictional seed profiles
         +
-local additions / edits / removals
+local additions and edits
+        −
+local removals
         ↓
-effective people collection
+effective directory
         ↓
-search + filters + sort
+search / filters / sort
         ↓
-derived stats and visible cards
+visible people + derived stats
 ```
 
-Search results, filters and metrics are derived rather than stored as parallel copies.
+Seed data stays immutable in source. Local overrides, additions and removed IDs are persisted separately and merged deterministically.
 
-Shortlist and profile changes are durable. Search terms and filters are intentionally temporary.
+## Search and metrics come from one directory
 
-## Architecture
+PeopleLens does not keep separate copies of filtered people, counts and shortlist views.
 
-```text
-React UI
-  ├── people selectors
-  ├── shortlist storage
-  └── local profile storage
+Search, filters, sorting and summary metrics are derived from the current effective collection.
 
-selectors → derived view → accessible components
-```
+That means an edited or newly added person immediately participates in:
 
-Search, filtering, sorting, stats and presentation helpers live in browser-independent functions that can be tested without rendering React.
+- result counts;
+- team filters;
+- availability filters;
+- capacity sorting;
+- summary metrics;
+- shortlist ordering.
 
-Persistence is kept behind defensive storage adapters so malformed saved data does not become UI state unchecked.
+This keeps the UI consistent without adding a global state library for a small single-screen product.
+
+## What happens when local storage is messy
+
+Browser storage is treated as a boundary rather than trusted input.
+
+The persistence layer validates stored profiles and shortlist IDs before they become application state.
+
+For profile data it:
+
+- validates required fields;
+- constrains work-mode and availability values;
+- clamps capacity to 0–100;
+- trims and deduplicates skills;
+- ignores malformed records;
+- merges seed data, overrides, additions and removals predictably.
+
+Search terms and filters stay temporary so a reload returns to a clean discovery view.
+
+## Interaction details that matter
+
+The product includes:
+
+- one primary add-person CTA;
+- accessible add/edit modal;
+- explicit removal confirmation;
+- keyboard-operable profile action menus;
+- Escape-to-close;
+- dialog focus trapping;
+- native `meter` for capacity;
+- explicit shortlist pressed state;
+- live result-count announcements;
+- visible keyboard focus;
+- reduced-motion handling;
+- forced-colors fallbacks;
+- responsive desktop/mobile layouts.
+
+The pointer-aware card tilt is decorative. It collapses for reduced-motion users and is not required to operate the directory.
 
 ## Stack
 
@@ -69,23 +208,10 @@ Persistence is kept behind defensive storage adapters so malformed saved data do
 - Playwright
 - axe-core
 - ESLint
-- GitHub Actions / GitHub Pages
+- GitHub Actions
+- GitHub Pages
 
-There is no router, global state library, component framework, API client or backend because this single-screen product does not need them.
-
-## Accessibility
-
-The UI uses native search/select/meter controls where they fit, plus:
-
-- skip navigation;
-- visible keyboard focus;
-- profile-specific action labels;
-- live result-count announcements;
-- explicit shortlist pressed state;
-- reduced-motion handling;
-- forced-colors fallbacks.
-
-## Quality
+## Verification
 
 ```bash
 npm ci
@@ -94,32 +220,36 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-The repository tests the parts most likely to regress:
+Tests cover:
 
 - cross-field search;
 - composable filters;
-- non-mutating sort;
-- shortlist ordering;
-- derived metrics;
-- persisted-profile normalization;
-- corrupted/stale stored IDs;
+- non-mutating sorting;
+- shortlist persistence and ordering;
+- derived directory metrics;
+- profile normalization;
+- malformed/stale stored data;
 - add/edit/remove browser flows;
-- accessibility.
+- accessibility;
+- viewport overflow.
 
 ## Run locally
 
 ```bash
+git clone https://github.com/MykolaDotsenko/people-lens.git
+cd people-lens
 npm ci
 npm run dev
 ```
 
-## Quick code review
+## Code map
 
-- [`src/App.jsx`](./src/App.jsx) — state ownership/composition
-- [`src/domain/people.js`](./src/domain/people.js) — discovery rules
-- [`src/storage/peopleStorage.js`](./src/storage/peopleStorage.js) — profile persistence
+- [`src/App.jsx`](./src/App.jsx) — workflow state and effective directory composition
+- [`src/domain/people.js`](./src/domain/people.js) — search, filters, sorting and derived stats
+- [`src/storage/peopleStorage.js`](./src/storage/peopleStorage.js) — local profile persistence
 - [`src/storage/pinnedStorage.js`](./src/storage/pinnedStorage.js) — shortlist persistence
-- [`src/components/PersonDialog.jsx`](./src/components/PersonDialog.jsx) — add/edit flow
-- [`e2e/`](./e2e/) — browser/accessibility coverage
+- [`src/components/PersonDialog.jsx`](./src/components/PersonDialog.jsx) — add/edit workflow
+- [`src/components/EmployeeCard.jsx`](./src/components/EmployeeCard.jsx) — profile, capacity and actions
+- [`e2e/`](./e2e/) — browser and accessibility coverage
 
-More design and architecture notes: [ARCHITECTURE.md](./ARCHITECTURE.md) · [DESIGN.md](./DESIGN.md)
+PeopleLens stays intentionally small: it helps a team find and compare internal expertise without pretending to replace the systems where staffing decisions are actually approved and managed.
