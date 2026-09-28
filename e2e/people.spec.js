@@ -32,7 +32,10 @@ test("filters recover cleanly from an empty result", async ({ page }) => {
   await page.getByRole("searchbox", { name: "Search" }).fill("no-such-person");
   await expect(page.getByRole("heading", { name: "No matching people" })).toBeVisible();
 
-  await page.getByRole("button", { name: "Reset filters" }).click();
+  await page
+    .getByRole("region", { name: "No matching people" })
+    .getByRole("button", { name: "Reset filters" })
+    .click();
   await expect(page.getByRole("status")).toContainText("12 matches");
 });
 
