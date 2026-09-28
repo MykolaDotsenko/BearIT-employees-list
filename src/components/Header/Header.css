@@ -2,14 +2,14 @@
   position: sticky;
   top: 0;
   z-index: 10;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
-  background: rgba(8, 17, 31, 0.82);
-  backdrop-filter: blur(18px);
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 85%, transparent);
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
+  backdrop-filter: blur(14px);
 }
 
 .site-header-inner {
-  width: min(1180px, calc(100% - 2rem));
-  min-height: 72px;
+  width: min(1200px, calc(100% - 2rem));
+  min-height: 68px;
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -18,12 +18,41 @@
 }
 
 .brand-mark {
-  display: inline-grid;
-  place-items: center;
+  position: relative;
+  display: inline-block;
   width: 34px;
   height: 34px;
-  border-radius: 11px;
-  background: linear-gradient(135deg, #67e8f9, #818cf8);
-  color: #07111f;
-  font-weight: 900;
+  border: 1.5px solid var(--ink);
+  border-radius: 50%;
+  background: var(--surface);
+}
+
+.brand-mark::before,
+.brand-mark::after {
+  content: "";
+  position: absolute;
+  inset: 50% auto auto 50%;
+  background: var(--ink);
+  transform: translate(-50%, -50%);
+}
+
+.brand-mark::before {
+  width: 17px;
+  height: 1.5px;
+}
+
+.brand-mark::after {
+  width: 1.5px;
+  height: 17px;
+}
+
+.brand-mark > span {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--coral);
+  box-shadow: 0 0 0 2px var(--surface);
 }

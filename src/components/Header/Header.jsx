@@ -6,14 +6,14 @@ export default function Header() {
       <div className="site-header-inner">
         <a className="brand" href="#main" aria-label="PeopleLens home">
           <span className="brand-mark" aria-hidden="true">
-            PL
+            <span />
           </span>
           <span>
             <strong>PeopleLens</strong>
             <small>PeopleOps signal board</small>
           </span>
         </a>
-        <span className="demo-badge">Fictional demo data</span>
+        <span className="demo-badge">Fictional dataset</span>
       </div>
     </header>
   );
