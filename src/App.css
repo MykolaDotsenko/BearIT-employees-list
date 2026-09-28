@@ -465,7 +465,7 @@ main {
   --tilt-y: 0deg;
   --lift: 0px;
   position: relative;
-  overflow: visible;
+  overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--team-accent) 22%, var(--line));
   border-radius: 1rem;
   background: #0c1522;
@@ -999,14 +999,6 @@ main {
   gap: 0.45rem;
 }
 
-.profile-menu {
-  position: relative;
-  z-index: 8;
-}
-
-.person-card:has(.profile-menu-trigger[aria-expanded="true"]) {
-  z-index: 20;
-}
 
 .profile-menu-trigger {
   display: grid;
@@ -1028,10 +1020,8 @@ main {
 }
 
 .profile-menu-popover {
-  position: absolute;
-  top: calc(100% + .45rem);
-  right: 0;
-  z-index: 30;
+  position: fixed;
+  z-index: 220;
   width: 205px;
   display: grid;
   gap: .2rem;
