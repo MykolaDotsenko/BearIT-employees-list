@@ -33,22 +33,22 @@ test("search matches across role, skill, city, and work mode fields", async ({ p
 });
 
 test("team and availability filters work independently and together", async ({ page }) => {
-  await page.getByLabel("Team").selectOption({ label: "Engineering" });
+  await page.getByLabel("Team", { exact: true }).selectOption({ label: "Engineering" });
   await expect(page.getByRole("status")).toContainText("5 matches");
 
-  await page.getByLabel("Status").selectOption("available");
+  await page.getByLabel("Status", { exact: true }).selectOption("available");
   await expect(page.getByRole("status")).toContainText("2 matches");
   await expect(page.getByRole("heading", { name: "Ava Lind" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Oliver Salo" })).toBeVisible();
 
-  await page.getByLabel("Team").selectOption({ label: "Design" });
+  await page.getByLabel("Team", { exact: true }).selectOption({ label: "Design" });
   await expect(page.getByRole("status")).toContainText("2 matches");
   await expect(page.getByRole("heading", { name: "Mina Koskinen" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Mikael Holm" })).toBeVisible();
 });
 
 test("capacity sorting orders the highest-capacity people first", async ({ page }) => {
-  await page.getByLabel("Sort").selectOption("capacity");
+  await page.getByLabel("Sort", { exact: true }).selectOption("capacity");
 
   const names = await page.locator(".person-card h3").allTextContents();
   expect(names.slice(0, 4)).toEqual([
@@ -60,7 +60,7 @@ test("capacity sorting orders the highest-capacity people first", async ({ page 
 });
 
 test("team sorting is deterministic and alphabetic by team then name", async ({ page }) => {
-  await page.getByLabel("Sort").selectOption("team");
+  await page.getByLabel("Sort", { exact: true }).selectOption("team");
 
   const names = await page.locator(".person-card h3").allTextContents();
   expect(names.slice(0, 5)).toEqual([
@@ -78,7 +78,7 @@ test("shortlist supports add, persistence, sort-first, and removal", async ({ pa
 
   await expect(page.locator(".stats-grid article").nth(3)).toContainText("2");
 
-  await page.getByLabel("Sort").selectOption("pinned");
+  await page.getByLabel("Sort", { exact: true }).selectOption("pinned");
   let names = await page.locator(".person-card h3").allTextContents();
   expect(names.slice(0, 2)).toEqual(["Ava Lind", "Sara Lehto"]);
 
@@ -121,16 +121,16 @@ test("corrupted persisted shortlist does not break the directory", async ({ page
 
 test("reset clears all active discovery controls and restores full directory", async ({ page }) => {
   await page.getByRole("searchbox", { name: "Search" }).fill("python");
-  await page.getByLabel("Team").selectOption({ label: "Data" });
-  await page.getByLabel("Status").selectOption("available");
-  await page.getByLabel("Sort").selectOption("capacity");
+  await page.getByLabel("Team", { exact: true }).selectOption({ label: "Data" });
+  await page.getByLabel("Status", { exact: true }).selectOption("available");
+  await page.getByLabel("Sort", { exact: true }).selectOption("capacity");
 
   await page.getByRole("button", { name: "Reset filters" }).click();
 
   await expect(page.getByRole("searchbox", { name: "Search" })).toHaveValue("");
-  await expect(page.getByLabel("Team")).toHaveValue("all");
-  await expect(page.getByLabel("Status")).toHaveValue("all");
-  await expect(page.getByLabel("Sort")).toHaveValue("name");
+  await expect(page.getByLabel("Team", { exact: true })).toHaveValue("all");
+  await expect(page.getByLabel("Status", { exact: true })).toHaveValue("all");
+  await expect(page.getByLabel("Sort", { exact: true })).toHaveValue("name");
   await expect(page.getByRole("status")).toContainText("12 matches");
 });
 
@@ -146,7 +146,10 @@ test("empty state recovers through both reset affordances", async ({ page }) => 
   await expect(page.getByRole("status")).toContainText("12 matches");
 
   await page.getByRole("searchbox", { name: "Search" }).fill("definitely-no-match");
-  await page.getByRole("button", { name: "Reset filters" }).click();
+  await page
+    .getByRole("region", { name: "Find the right teammate" })
+    .getByRole("button", { name: "Reset filters" })
+    .click();
   await expect(page.getByRole("status")).toContainText("12 matches");
 });
 
