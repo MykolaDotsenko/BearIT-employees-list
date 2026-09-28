@@ -7,7 +7,7 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? "line" : "list",
   use: {
-    baseURL: "http://127.0.0.1:4173/BearIT-employees-list/",
+    baseURL: "http://127.0.0.1:4173/people-lens/",
     trace: "retain-on-failure",
   },
   projects: [
@@ -22,7 +22,7 @@ export default defineConfig({
   ],
   webServer: {
     command: "npm run preview -- --host 127.0.0.1 --port 4173",
-    url: "http://127.0.0.1:4173/BearIT-employees-list/",
+    url: "http://127.0.0.1:4173/people-lens/",
     reuseExistingServer: !process.env.CI,
   },
 });

@@ -71,7 +71,7 @@ export default function App() {
             <p className="eyebrow">People intelligence, without the noise</p>
             <h1 id="hero-title">See capacity, skills, and availability in one focused view.</h1>
             <p className="hero-copy">
-              PeopleLens is a compact PeopleOps case study built around one job:
+              PeopleLens is a compact PeopleOps directory built around one job:
               finding the right teammate quickly without turning a small product
               into a heavy HR platform.
             </p>
@@ -156,9 +156,9 @@ export default function App() {
         )}
 
         <footer className="page-footer">
-          <p>Portfolio case study · all names and staffing data are fictional.</p>
+          <p>Fictional demo directory · all names and staffing data are fictional.</p>
           <a
-            href="https://github.com/MykolaDotsenko/BearIT-employees-list"
+            href="https://github.com/MykolaDotsenko/people-lens"
             target="_blank"
             rel="noreferrer"
           >
