@@ -1,12 +1,12 @@
 # PeopleLens — PeopleOps Directory
 
-[![Quality](https://github.com/MykolaDotsenko/BearIT-employees-list/actions/workflows/quality.yml/badge.svg)](https://github.com/MykolaDotsenko/BearIT-employees-list/actions/workflows/quality.yml)
+[![Quality](https://github.com/MykolaDotsenko/people-lens/actions/workflows/quality.yml/badge.svg)](https://github.com/MykolaDotsenko/people-lens/actions/workflows/quality.yml)
 
-A compact React case study for discovering people by **role, skill, team, location, availability, and near-term capacity**.
+**A focused PeopleOps directory for finding teammates by role, skills, team, location, availability, and near-term capacity.**
 
-**Live demo:** https://mykoladotsenko.github.io/BearIT-employees-list/
+Built with React around explicit state ownership, pure discovery logic, resilient local persistence, and accessible interaction.
 
-> The repository began as a React training exercise. The current implementation keeps the small scope but rebuilds it as a focused product with explicit state ownership, pure selectors, resilient local persistence, accessibility, and automated quality gates.
+[**Open the live demo →**](https://mykoladotsenko.github.io/people-lens/)
 
 ## Product capabilities
 
@@ -114,9 +114,9 @@ npm ci
 npm run dev
 ~~~
 
-## Recruiter walkthrough
+## Key implementation areas
 
-For a quick engineering review:
+For a focused implementation review:
 
 1. [src/App.jsx](./src/App.jsx) — state ownership and composition
 2. [src/domain/people.js](./src/domain/people.js) — pure discovery rules
@@ -127,6 +127,8 @@ For a quick engineering review:
 
 ## Repository evolution
 
-The original tutorial tabs, timer side effect, remote JSONPlaceholder demo, feedback exercise, and stale deployment metadata were intentionally removed. They demonstrated React syntax but obscured the product story.
+PeopleLens began as a small React learning project. The current version narrows the repository around one coherent product flow: searchable people discovery, team and availability filtering, capacity signals, and a persisted shortlist.
 
-The rebuilt repository now has one clear job, one authoritative data flow, and a much smaller cognitive surface.
+Earlier tutorial-only tabs, timer side effects, the JSONPlaceholder demo, feedback exercises, and stale deployment metadata were removed when they no longer supported that product direction.
+
+The result is one clear job, one authoritative data flow, and a smaller cognitive surface.
