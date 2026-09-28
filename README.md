@@ -8,6 +8,8 @@ Built with React around explicit state ownership, pure discovery logic, resilien
 
 [**Open the live demo →**](https://mykoladotsenko.github.io/people-lens/)
 
+Use the illuminated **+** control to add a locally managed profile; created profiles persist in this browser and participate in directory stats, search, filters, sorting, and shortlist.
+
 ![PeopleLens directory showing search, team filters, availability, capacity signals, and a saved shortlist](./docs/screenshots/people-lens-home.png)
 
 ## Product capabilities
