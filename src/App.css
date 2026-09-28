@@ -655,30 +655,19 @@ main {
   }
 
   .hero h1 {
-    font-size: clamp(2.35rem, 10vw, 3.15rem);
-    line-height: 0.98;
+    font-size: clamp(2.55rem, 11.5vw, 3.65rem);
   }
 
   .hero-copy {
-    margin-top: 0.75rem;
-    font-size: 0.98rem;
-    line-height: 1.5;
+    margin-top: 0.8rem;
   }
 
   .hero-signal {
     max-width: none;
     border-radius: 0.85rem;
-    padding: 0.95rem 1rem 1rem;
   }
 
-  .hero-signal strong {
-    font-size: 2.15rem;
-  }
-
-  .stats-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
+  .stats-grid,
   .filter-grid {
     grid-template-columns: 1fr;
   }
@@ -689,23 +678,11 @@ main {
   .stats-grid article:last-child {
     border-left: 0;
     border-bottom: 1px solid var(--line);
-    padding: 0.7rem 0.65rem;
+    padding: 0.72rem 0;
   }
 
-  .stats-grid article:nth-child(even) {
-    border-left: 1px solid var(--line);
-  }
-
-  .stats-grid article:nth-child(n + 3) {
+  .stats-grid article:last-child {
     border-bottom: 0;
-  }
-
-  .stats-grid article:nth-child(odd) {
-    padding-left: 0;
-  }
-
-  .stats-grid article:nth-child(even) {
-    padding-right: 0;
   }
 
   .field-search {
