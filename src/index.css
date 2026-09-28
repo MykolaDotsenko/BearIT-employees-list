@@ -36,7 +36,12 @@ body {
   min-width: 320px;
   min-height: 100vh;
   margin: 0;
-  background: var(--paper);
+  background:
+    linear-gradient(rgba(29, 38, 31, 0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(29, 38, 31, 0.028) 1px, transparent 1px),
+    var(--paper);
+  background-size: 28px 28px;
+  font-optical-sizing: auto;
 }
 
 button,
