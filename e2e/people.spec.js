@@ -9,7 +9,7 @@ test("core discovery flow stays focused and deterministic", async ({ page }) => 
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: /see capacity, skills, and availability/i,
+      name: /find the teammate who can actually take the work/i,
     }),
   ).toBeVisible();
 
