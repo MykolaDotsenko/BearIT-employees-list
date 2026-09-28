@@ -78,10 +78,11 @@ export default function App() {
           </div>
 
           <div className="hero-signal" aria-label="Current directory signal">
-            <span className="signal-dot" aria-hidden="true" />
+            <span className="signal-index">Current signal</span>
             <div>
-              <strong>{stats.available} people available</strong>
-              <span>across {stats.teams} disciplines</span>
+              <strong>{stats.available} available</strong>
+              <span>people ready for near-term work</span>
+              <small>across {stats.teams} disciplines</small>
             </div>
           </div>
         </section>
